@@ -4,6 +4,9 @@ project(CM_Project3)
 set(CMAKE_PREFIX_PATH "C:/dev/vcpkg/installed/x64-windows")
 set(CMAKE_TOOLCHAIN_FILE "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 include_directories("../include/")
 
 add_executable(app main.cpp  "../include/math.hpp")
