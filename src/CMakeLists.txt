@@ -6,7 +6,7 @@ set(CMAKE_TOOLCHAIN_FILE "C:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 include_directories("../include/")
 
-add_executable(app main.cpp)
+add_executable(app main.cpp  "../include/math.hpp")
 
 find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
 target_link_libraries(app PRIVATE sfml-system sfml-graphics sfml-window)
