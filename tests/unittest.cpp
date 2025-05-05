@@ -28,7 +28,7 @@ TEST_CASE("Projection", "[math]")
 	sf::Vector2f expected{ 7.38f, 5.715f };
 
 	float tolerance = 1e-2;
-	// assert projection point coordinates is near expected variable coordinates
+	// make sure that the 2D coordinates of projected point are close to the expected coordinates
 	REQUIRE(Catch::Approx(projectionPoint.x).margin(tolerance) == expected.x);
 	REQUIRE(Catch::Approx(projectionPoint.y).margin(tolerance) == expected.y);
 }
