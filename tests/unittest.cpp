@@ -22,6 +22,7 @@ TEST_CASE("Projection", "[math]")
 
 	sf::Vector2f productDistanceNormal = normal * distanceNormal;
 	sf::Vector2f projectionPoint{ point.x - productDistanceNormal.x , point.y - productDistanceNormal.y };
+	INFO("projectionPoint = (" << projectionPoint.x << ", " << projectionPoint.y << ")");
 
 	sf::Vector2f expected{ 7.38f, 5.715f };
 
