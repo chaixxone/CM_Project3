@@ -4,10 +4,10 @@
 
 TEST_CASE("Normal", "[math]")
 {
-	sf::Vector2f a{ 3, 4 };
-	sf::Vector2f expected{ -4.0 / 5, 3.0 / 5 };
+	sf::Vector2f a{ 3.f, 4.f };
+	sf::Vector2f expected{ -4.f / 5, 3.f / 5 };
 	sf::Vector2f actual = Engine::Normal(a);
-	REQUIRE((actual.x == expected.x && actual.y == expected.y));
+	REQUIRE(actual == expected);
 }
 
 TEST_CASE("Projection", "[math]")
@@ -27,7 +27,7 @@ TEST_CASE("Projection", "[math]")
 
 	sf::Vector2f expected{ 7.38f, 5.715f };
 
-	float tolerance = 1e-2;
+	float tolerance = 1e-2f;
 	// make sure that the 2D coordinates of projected point are close to the expected coordinates
 	REQUIRE(Catch::Approx(projectionPoint.x).margin(tolerance) == expected.x);
 	REQUIRE(Catch::Approx(projectionPoint.y).margin(tolerance) == expected.y);
