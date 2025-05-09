@@ -2,11 +2,11 @@
 #include <catch2/catch_approx.hpp>
 #include <math.hpp>
 
-TEST_CASE("Normal", "[math]")
+TEST_CASE("normal", "[math]")
 {
 	sf::Vector2f a{ 3.f, 4.f };
 	sf::Vector2f expected{ -4.f / 5, 3.f / 5 };
-	sf::Vector2f actual = Engine::Normal(a);
+	sf::Vector2f actual = Engine::normal(a);
 	REQUIRE(actual == expected);
 }
 
@@ -15,11 +15,11 @@ TEST_CASE("Projection", "[math]")
 	sf::Vector2f origin{ 5.f, 5.f };
 	sf::Vector2f fillerPoint{ 6.f, 5.3f };
 	sf::Vector2f line = fillerPoint - origin;
-	sf::Vector2f normal = Engine::Normal(line);
+	sf::Vector2f normal = Engine::normal(line);
 
 	sf::Vector2f point{ 7.f, 7.f };
 	sf::Vector2f vectorPoint = point - origin;
-	float distanceNormal = Engine::Dot(vectorPoint, normal);
+	float distanceNormal = Engine::dot(vectorPoint, normal);
 
 	sf::Vector2f productDistanceNormal = normal * distanceNormal;
 	sf::Vector2f projectionPoint = point - productDistanceNormal;
