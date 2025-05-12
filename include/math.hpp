@@ -3,6 +3,10 @@
 
 namespace Engine
 {
+	/**
+	* @brief calculates normal vector from a vector
+	* @param a: vector (or an edge)
+	*/
 	sf::Vector2f Normal(const sf::Vector2f& a)
 	{
 		float x = -a.y;
