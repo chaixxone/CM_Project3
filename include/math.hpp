@@ -17,4 +17,21 @@ namespace Engine
 	{
 		return a.x * b.x + a.y * b.y;
 	}
+
+	/**
+	* @brief calculates a point's projection onto a normal vector
+	* @param a: shape edge start
+	* @param b: shape edge end
+	* @param vertex: point for which to create a projection 
+	*/
+	float Projection(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& vertex)
+	{
+		sf::Vector2f line = a - b;
+		sf::Vector2f normalVector = Normal(line);
+
+		sf::Vector2f vectorPoint = vertex - a;
+		float projection = Engine::Dot(vectorPoint, normalVector);
+
+		return projection;
+	}
 } // namespace Engine
