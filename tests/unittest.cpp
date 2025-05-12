@@ -14,14 +14,12 @@ TEST_CASE("Projection", "[math]")
 {
 	sf::Vector2f origin{ 5.f, 5.f };
 	sf::Vector2f fillerPoint{ 6.f, 5.3f };
-	sf::Vector2f line = fillerPoint - origin;
-	sf::Vector2f normal = Engine::Normal(line);
-
 	sf::Vector2f point{ 7.f, 7.f };
-	sf::Vector2f vectorPoint = point - origin;
-	float distanceNormal = Engine::Dot(vectorPoint, normal);
 
-	sf::Vector2f productDistanceNormal = normal * distanceNormal;
+	sf::Vector2f normalVector = Engine::Normal(fillerPoint - origin);
+	float distanceNormal = Engine::Projection(origin, fillerPoint, point);
+
+	sf::Vector2f productDistanceNormal = normalVector * distanceNormal;
 	sf::Vector2f projectionPoint = point - productDistanceNormal;
 	INFO("projectionPoint = (" << projectionPoint.x << ", " << projectionPoint.y << ")");
 
