@@ -26,7 +26,7 @@ namespace Engine
 	*/
 	float Projection(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& vertex)
 	{
-		sf::Vector2f line = a - b;
+		sf::Vector2f line = b - a;
 		sf::Vector2f normalVector = Normal(line);
 
 		sf::Vector2f vectorPoint = vertex - a;
