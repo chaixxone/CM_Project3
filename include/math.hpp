@@ -9,7 +9,7 @@ namespace Engine
 	* @brief calculates normal vector from a vector
 	* @param a: vector (or an edge)
 	*/
-	sf::Vector2f Normal(const sf::Vector2f& a)
+	sf::Vector2f normal(const sf::Vector2f& a)
 	{
 		float x = -a.y;
 		float y = a.x;
@@ -19,7 +19,7 @@ namespace Engine
 		return sf::Vector2f{ x, y };
 	}
 
-	float Dot(const sf::Vector2f& a, const sf::Vector2f& b)
+	float dot(const sf::Vector2f& a, const sf::Vector2f& b)
 	{
 		return a.x * b.x + a.y * b.y;
 	}
@@ -30,13 +30,13 @@ namespace Engine
 	* @param b: shape edge end
 	* @param vertex: point for which to create a projection 
 	*/
-	float Projection(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& vertex)
+	float projection(const sf::Vector2f& a, const sf::Vector2f& b, const sf::Vector2f& vertex)
 	{
 		sf::Vector2f line = b - a;
-		sf::Vector2f normalVector = Normal(line);
+		sf::Vector2f normalVector = normal(line);
 
 		sf::Vector2f vectorPoint = vertex - a;
-		float projection = Engine::Dot(vectorPoint, normalVector);
+		float projection = Engine::dot(vectorPoint, normalVector);
 
 		return projection;
 	}
@@ -46,7 +46,7 @@ namespace Engine
 	* @param aShapeVertices: first shape verteces
 	* @param bShapeVertices: second shape verteces
 	*/
-	bool CheckCollide(const std::vector<sf::Vector2f> aShapeVertices, const std::vector<sf::Vector2f> bShapeVertices)
+	bool checkCollide(const std::vector<sf::Vector2f> aShapeVertices, const std::vector<sf::Vector2f> bShapeVertices)
 	{
 		return false;
 	}
