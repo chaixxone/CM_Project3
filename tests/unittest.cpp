@@ -1,5 +1,6 @@
 #include <catch2/catch_all.hpp>
 #include <catch2/catch_approx.hpp>
+#include <SFML/Graphics/ConvexShape.hpp>
 #include <math.hpp>
 
 TEST_CASE("Normal", "[math]")
@@ -29,4 +30,29 @@ TEST_CASE("Projection", "[math]")
 	// make sure that the 2D coordinates of projected point are close to the expected coordinates
 	REQUIRE(Catch::Approx(projectionPoint.x).margin(tolerance) == expected.x);
 	REQUIRE(Catch::Approx(projectionPoint.y).margin(tolerance) == expected.y);
+}
+
+TEST_CASE("Shape's verteces", "[math]")
+{
+	const int PENTAGON = 5;
+	sf::ConvexShape convexShape{ PENTAGON };
+	std::vector<sf::Vector2f> actualVerteces = {
+		{ 50.f,    2.f    },
+		{ 89.f,    10.5f  },
+		{ 92.f,    177.1f },
+		{ 50.f,    90.f   },
+		{ 66.666f, 71.89f }
+	};
+
+	for (int i = 0; i < PENTAGON; i++)
+	{
+		convexShape.setPoint(i, actualVerteces[i]);
+	}
+
+	std::vector<sf::Vector2f> receivedVerteces = Engine::getVertices(&convexShape);
+
+	for (int i = 0; i < PENTAGON; i++)
+	{
+		REQUIRE(receivedVerteces[i] == actualVerteces[i]);
+	}
 }
