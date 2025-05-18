@@ -58,11 +58,11 @@ namespace Engine
 	*/
 	std::vector<sf::Vector2f> getVertices(sf::Shape* shape)
 	{
-		int verticesAmount = shape->getPointCount();
+		size_t verticesAmount = shape->getPointCount();
 		std::vector<sf::Vector2f> verteces(verticesAmount);
 		sf::Transform transform = shape->getTransform();
 
-		for (int i = 0; i < verticesAmount; i++)
+		for (size_t i = 0; i < verticesAmount; i++)
 		{
 			verteces[i] = transform.transformPoint(shape->getPoint(i));
 		}
