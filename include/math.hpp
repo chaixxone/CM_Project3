@@ -41,6 +41,22 @@ namespace Engine
 		return projection;
 	}
 
+	std::vector<sf::Vector2f> getShapeEdges(const std::vector<sf::Vector2f>& shapeVertices)
+	{
+		const size_t VERTICES = shapeVertices.size();
+		const size_t LAST = VERTICES - 1;
+		std::vector<sf::Vector2f> edges(VERTICES);
+
+		for (size_t i = 1; i < VERTICES; i++)
+		{
+			edges[i - 1] = shapeVertices[i] - shapeVertices[i - 1];
+		}
+
+		edges[LAST] = shapeVertices[LAST] - shapeVertices[0];
+
+		return edges;
+	}
+
 	/**
 	* @brief Checks two shapes for a collision between them. Uses SAT collision method.
 	* @param aShapeVertices: first shape verteces
