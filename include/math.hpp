@@ -45,18 +45,18 @@ namespace Engine
 	* @brief calculates shape's edges as sf::Vector2f vectors
 	* @param shapeVertices: shape vertices coordinates
 	*/
-	std::vector<sf::Vector2f> getShapeEdges(const std::vector<sf::Vector2f>& shapeVertices)
+	std::vector<std::pair<sf::Vector2f, sf::Vector2f>> getShapeEdges(const std::vector<sf::Vector2f>& shapeVertices)
 	{
 		const size_t VERTICES = shapeVertices.size();
 		const size_t LAST = VERTICES - 1;
-		std::vector<sf::Vector2f> edges(VERTICES);
+		std::vector<std::pair<sf::Vector2f, sf::Vector2f>> edges(VERTICES);
 
 		for (size_t i = 1; i < VERTICES; i++)
 		{
-			edges[i - 1] = shapeVertices[i] - shapeVertices[i - 1];
+			edges[i - 1] = std::make_pair(shapeVertices[i - 1], shapeVertices[i]);
 		}
 
-		edges[LAST] = shapeVertices[LAST] - shapeVertices[0];
+		edges[LAST] = std::make_pair(shapeVertices[LAST], shapeVertices[0]);
 
 		return edges;
 	}
