@@ -56,3 +56,37 @@ TEST_CASE("Shape's verteces", "[math]")
 		REQUIRE(receivedVerteces[i] == actualVerteces[i]);
 	}
 }
+
+TEST_CASE("Shape's edges", "[math]")
+{
+	const int EDGES = 4;
+	sf::ConvexShape convexShape{ EDGES };
+	std::vector<sf::Vector2f> verteces = {
+		{ 50.f,    2.f    },
+		{ 89.f,    10.5f  },
+		{ 92.f,    177.1f },
+		{ 50.f,    90.f   }
+	};
+
+	for (int i = 0; i < EDGES; i++)
+	{
+		convexShape.setPoint(i, verteces[i]);
+	}
+
+	std::vector<sf::Vector2f> actualEdges = {
+		{ 39.f,  8.5f   },
+		{ 3.f,   166.6f },
+		{-42.f, -87.1f  },
+		{ 0.f,   88.f   }
+	};
+
+	std::vector<sf::Vector2f> receivedEdges = Engine::getShapeEdges(verteces);
+
+	const float MARGIN = 1e-2;
+
+	for (int i = 0; i < EDGES; i++)
+	{
+		REQUIRE(Catch::Approx(receivedEdges[i].x).margin(MARGIN) == actualEdges[i].x);
+		REQUIRE(Catch::Approx(receivedEdges[i].y).margin(MARGIN) == actualEdges[i].y);
+	}
+}
