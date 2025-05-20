@@ -59,16 +59,83 @@ namespace Engine
 		edges[LAST] = std::make_pair(shapeVertices[LAST], shapeVertices[0]);
 
 		return edges;
-	}
+	}	
 
 	/**
 	* @brief Checks two shapes for a collision between them. Uses SAT collision method.
 	* @param aShapeVertices: first shape verteces
 	* @param bShapeVertices: second shape verteces
+	* @return false if no collision detected, true if shapes are colliding
 	*/
-	bool checkCollide(const std::vector<sf::Vector2f> aShapeVertices, const std::vector<sf::Vector2f> bShapeVertices)
+	bool checkCollide(const std::vector<sf::Vector2f>& aShapeVertices, const std::vector<sf::Vector2f>& bShapeVertices)
 	{
-		return false;
+		auto aEdges = getShapeEdges(aShapeVertices);
+		auto bEdges = getShapeEdges(bShapeVertices);
+
+		std::vector<std::pair<sf::Vector2f, sf::Vector2f>> allEdges = aEdges;
+		std::copy(bEdges.begin(), bEdges.end(), std::back_inserter(allEdges));
+
+		std::vector<float> projectionsA(aShapeVertices.size());
+		std::vector<float> projectionsB(bShapeVertices.size());
+
+		for (const auto& edge : allEdges)
+		{
+			// make each vertex projections
+			for (size_t j = 0; j < aShapeVertices.size(); j++)
+			{
+				projectionsA[j] = projection(edge.first, edge.second, aShapeVertices[j]);
+			}
+
+			for (size_t j = 0; j < bShapeVertices.size(); j++)
+			{
+				projectionsB[j] = projection(edge.first, edge.second, bShapeVertices[j]);
+			}
+
+			// find minimum and maximum projections of each shape
+			float minProjectionA = projectionsA[0];
+			float maxProjectionA = projectionsA[0];
+
+			for (size_t j = 1; j < projectionsA.size(); j++)
+			{
+				minProjectionA = std::min(minProjectionA, projectionsA[j]);
+				maxProjectionA = std::max(maxProjectionA, projectionsA[j]);
+			}
+
+			float minProjectionB = projectionsB[0];
+			float maxProjectionB = projectionsB[0];
+
+			for (size_t j = 1; j < projectionsB.size(); j++)
+			{
+				minProjectionB = std::min(minProjectionB, projectionsA[j]);
+				maxProjectionB = std::max(maxProjectionB, projectionsA[j]);
+			}
+
+			/*
+			* collision checking rules
+			* 
+			* for Amin < Bmin
+			* Amin--------Bmin=====Amax--------Bmax
+			* 			      
+			* for Amin > Bmin
+			* Bmin--------Amin=====Bmax--------Amax
+			*/
+			if (minProjectionA < minProjectionB)
+			{
+				if (minProjectionB > maxProjectionA)
+				{
+					return false;
+				}
+			}
+			else if (minProjectionA > minProjectionB)
+			{
+				if (minProjectionA > maxProjectionB)
+				{
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	/**
