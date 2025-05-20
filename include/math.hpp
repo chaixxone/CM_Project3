@@ -41,6 +41,10 @@ namespace Engine
 		return projection;
 	}
 
+	/**
+	* @brief calculates shape's edges as sf::Vector2f vectors
+	* @param shapeVertices: shape vertices coordinates
+	*/
 	std::vector<sf::Vector2f> getShapeEdges(const std::vector<sf::Vector2f>& shapeVertices)
 	{
 		const size_t VERTICES = shapeVertices.size();
