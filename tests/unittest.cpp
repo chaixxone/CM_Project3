@@ -7,7 +7,7 @@ TEST_CASE("Normal", "[math]")
 {
 	sf::Vector2f a{ 3.f, 4.f };
 	sf::Vector2f expected{ -4.f / 5.f, 3.f / 5.f };
-	sf::Vector2f actual = Engine::Normal(a);
+	sf::Vector2f actual = Engine::normal(a);
 	REQUIRE((actual.x == expected.x && actual.y == expected.y));
 }
 
@@ -17,8 +17,8 @@ TEST_CASE("Projection", "[math]")
 	sf::Vector2f fillerPoint{ 6.f, 5.3f };
 	sf::Vector2f point{ 7.f, 7.f };
 
-	sf::Vector2f normalVector = Engine::Normal(fillerPoint - origin);
-	float distanceNormal = Engine::Projection(origin, fillerPoint, point);
+	sf::Vector2f normalVector = Engine::normal(fillerPoint - origin);
+	float distanceNormal = Engine::projection(origin, fillerPoint, point);
 
 	sf::Vector2f productDistanceNormal = normalVector * distanceNormal;
 	sf::Vector2f projectionPoint = point - productDistanceNormal;
