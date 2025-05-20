@@ -62,10 +62,10 @@ TEST_CASE("Shape's edges", "[math]")
 	const int EDGES = 4;
 	sf::ConvexShape convexShape{ EDGES };
 	std::vector<sf::Vector2f> verteces = {
-		{ 50.f,    2.f    },
-		{ 89.f,    10.5f  },
-		{ 92.f,    177.1f },
-		{ 50.f,    90.f   }
+		{ 50.f, 2.f    },
+		{ 89.f, 10.5f  },
+		{ 92.f, 177.1f },
+		{ 50.f, 90.f   }
 	};
 
 	for (int i = 0; i < EDGES; i++)
@@ -74,10 +74,10 @@ TEST_CASE("Shape's edges", "[math]")
 	}
 
 	std::vector<std::pair<sf::Vector2f, sf::Vector2f>> actualEdges = {
-		{ { 50.f, 2.f    }, { 89.f, 10.5f  } },
-		{ { 89.f, 10.5f  }, { 92.f, 177.1f } },
-		{ { 92.f, 177.1f }, { 50.f, 90.f   } },
-		{ { 50.f, 90.f   }, { 50.f, 2.f    } }
+		{ verteces[0], verteces[1] },
+		{ verteces[1], verteces[2] },
+		{ verteces[2], verteces[3] },
+		{ verteces[3], verteces[0] }
 	};
 
 	std::vector<std::pair<sf::Vector2f, sf::Vector2f>> receivedEdges = Engine::getShapeEdges(verteces);
