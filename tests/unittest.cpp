@@ -93,3 +93,31 @@ TEST_CASE("Shape's edges", "[math]")
 		REQUIRE(Catch::Approx(receivedEdges[i].second.y).margin(MARGIN) == actualEdges[i].second.y);
 	}
 }
+
+TEST_CASE("SAT", "[math]")
+{
+	const int EDGES = 4;
+	sf::ConvexShape shapeA{ EDGES };
+	shapeA.setPoint(0, { 100, 400 });
+	shapeA.setPoint(1, { 300, 300 });
+	shapeA.setPoint(2, { 300, 200 });
+	shapeA.setPoint(3, { 100, 100 });
+
+	sf::ConvexShape shapeB{ EDGES };
+	shapeB.setPoint(0, { 300, 400 });
+	shapeB.setPoint(1, { 500, 500 });
+	shapeB.setPoint(2, { 600, 200 });
+	shapeB.setPoint(3, { 400, 200 });
+
+	auto vertecesA = Engine::getVertices(&shapeA);
+	auto vertecesB = Engine::getVertices(&shapeB);
+
+	REQUIRE(Engine::checkCollide(vertecesA, vertecesB) == false);
+	
+	// shift shapeB by 100 pixels to the left - collission must be detected
+	shapeB.move({ -100.f, 0.f });
+	vertecesA = Engine::getVertices(&shapeA);
+	vertecesB = Engine::getVertices(&shapeB);
+
+	REQUIRE(Engine::checkCollide(vertecesA, vertecesB) == true);
+}
