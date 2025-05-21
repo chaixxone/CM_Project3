@@ -106,8 +106,8 @@ namespace Engine
 
 			for (size_t j = 1; j < projectionsB.size(); j++)
 			{
-				minProjectionB = std::min(minProjectionB, projectionsA[j]);
-				maxProjectionB = std::max(maxProjectionB, projectionsA[j]);
+				minProjectionB = std::min(minProjectionB, projectionsB[j]);
+				maxProjectionB = std::max(maxProjectionB, projectionsB[j]);
 			}
 
 			/*
