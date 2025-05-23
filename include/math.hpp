@@ -73,7 +73,7 @@ namespace Engine
 		auto bEdges = getShapeEdges(bShapeVertices);
 
 		std::vector<std::pair<sf::Vector2f, sf::Vector2f>> allEdges = aEdges;
-		std::copy(bEdges.begin(), bEdges.end(), std::back_inserter(allEdges));
+		std::ranges::copy(bEdges, std::back_inserter(allEdges));
 
 		std::vector<float> projectionsA(aShapeVertices.size());
 		std::vector<float> projectionsB(bShapeVertices.size());
