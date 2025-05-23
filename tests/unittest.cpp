@@ -114,7 +114,7 @@ TEST_CASE("SAT", "[math]")
 
 	REQUIRE(Engine::checkCollide(verticesA, verticesB) == false);
 	
-	// shift shapeB by 100 pixels to the left - collission must be detected
+	// shift shapeB by 100 pixels to the left - collision must be detected
 	shapeB.move({ -100.f, 0.f });
 	verticesA = Engine::getVertices(&shapeA);
 	verticesB = Engine::getVertices(&shapeB);
