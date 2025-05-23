@@ -8,7 +8,7 @@ TEST_CASE("Normal", "[math]")
 	sf::Vector2f a{ 3.f, 4.f };
 	sf::Vector2f expected{ -4.f / 5.f, 3.f / 5.f };
 	sf::Vector2f actual = Engine::normal(a);
-	REQUIRE((actual.x == expected.x && actual.y == expected.y));
+	REQUIRE(actual == expected);
 }
 
 TEST_CASE("Projection", "[math]")
