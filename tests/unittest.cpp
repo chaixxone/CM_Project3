@@ -32,11 +32,11 @@ TEST_CASE("Projection", "[math]")
 	REQUIRE(Catch::Approx(projectionPoint.y).margin(tolerance) == expected.y);
 }
 
-TEST_CASE("Shape's verteces", "[math]")
+TEST_CASE("Shape's vertices", "[math]")
 {
 	const int PENTAGON = 5;
 	sf::ConvexShape convexShape{ PENTAGON };
-	std::vector<sf::Vector2f> actualVerteces = {
+	std::vector<sf::Vector2f> actualVertices = {
 		{ 50.f,    2.f    },
 		{ 89.f,    10.5f  },
 		{ 92.f,    177.1f },
@@ -46,14 +46,14 @@ TEST_CASE("Shape's verteces", "[math]")
 
 	for (int i = 0; i < PENTAGON; i++)
 	{
-		convexShape.setPoint(i, actualVerteces[i]);
+		convexShape.setPoint(i, actualVertices[i]);
 	}
 
-	std::vector<sf::Vector2f> receivedVerteces = Engine::getVertices(&convexShape);
+	std::vector<sf::Vector2f> receivedVertices = Engine::getVertices(&convexShape);
 
 	for (int i = 0; i < PENTAGON; i++)
 	{
-		REQUIRE(receivedVerteces[i] == actualVerteces[i]);
+		REQUIRE(receivedVertices[i] == actualVertices[i]);
 	}
 }
 
@@ -61,7 +61,7 @@ TEST_CASE("Shape's edges", "[math]")
 {
 	const int EDGES = 4;
 	sf::ConvexShape convexShape{ EDGES };
-	std::vector<sf::Vector2f> verteces = {
+	std::vector<sf::Vector2f> vertices = {
 		{ 50.f, 2.f    },
 		{ 89.f, 10.5f  },
 		{ 92.f, 177.1f },
@@ -70,17 +70,17 @@ TEST_CASE("Shape's edges", "[math]")
 
 	for (int i = 0; i < EDGES; i++)
 	{
-		convexShape.setPoint(i, verteces[i]);
+		convexShape.setPoint(i, vertices[i]);
 	}
 
 	std::vector<std::pair<sf::Vector2f, sf::Vector2f>> actualEdges = {
-		{ verteces[0], verteces[1] },
-		{ verteces[1], verteces[2] },
-		{ verteces[2], verteces[3] },
-		{ verteces[3], verteces[0] }
+		{ vertices[0], vertices[1] },
+		{ vertices[1], vertices[2] },
+		{ vertices[2], vertices[3] },
+		{ vertices[3], vertices[0] }
 	};
 
-	std::vector<std::pair<sf::Vector2f, sf::Vector2f>> receivedEdges = Engine::getShapeEdges(verteces);
+	std::vector<std::pair<sf::Vector2f, sf::Vector2f>> receivedEdges = Engine::getShapeEdges(vertices);
 
 	const float MARGIN = 1e-2f;
 
@@ -109,15 +109,15 @@ TEST_CASE("SAT", "[math]")
 	shapeB.setPoint(2, { 600, 200 });
 	shapeB.setPoint(3, { 400, 200 });
 
-	auto vertecesA = Engine::getVertices(&shapeA);
-	auto vertecesB = Engine::getVertices(&shapeB);
+	auto verticesA = Engine::getVertices(&shapeA);
+	auto verticesB = Engine::getVertices(&shapeB);
 
-	REQUIRE(Engine::checkCollide(vertecesA, vertecesB) == false);
+	REQUIRE(Engine::checkCollide(verticesA, verticesB) == false);
 	
 	// shift shapeB by 100 pixels to the left - collission must be detected
 	shapeB.move({ -100.f, 0.f });
-	vertecesA = Engine::getVertices(&shapeA);
-	vertecesB = Engine::getVertices(&shapeB);
+	verticesA = Engine::getVertices(&shapeA);
+	verticesB = Engine::getVertices(&shapeB);
 
-	REQUIRE(Engine::checkCollide(vertecesA, vertecesB) == true);
+	REQUIRE(Engine::checkCollide(verticesA, verticesB) == true);
 }
