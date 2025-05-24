@@ -169,4 +169,32 @@ namespace Engine
 	{
 		return a.x * b.y - b.x * a.y;
 	}
+
+	/**
+	* @brief Checks if the shape is concave
+	* @param shape: the inspected shape
+	* @returns true if the shape is concave, false if it's not
+	*/
+	bool isShapeConcave(sf::Shape* shape)
+	{
+		float previousRotateDirection = 0.f;
+		size_t verticesCount = shape->getPointCount();
+		std::vector<sf::Vector2f> vertices = getVertices(shape);
+
+		for (size_t i = 0; i < verticesCount; i++)
+		{
+			sf::Vector2f vectorPreviousVertex{ vertices[(i - 1 + verticesCount) % verticesCount] - vertices[i] };
+			sf::Vector2f vectorNextVertex{ vertices[(i + 1 + verticesCount) % verticesCount] - vertices[i] };
+			float currentRotateDirection = cross(vectorPreviousVertex, vectorNextVertex);
+
+			if (currentRotateDirection * previousRotateDirection < 0)
+			{
+				return true;
+			}
+
+			previousRotateDirection = currentRotateDirection;
+		}
+
+		return false;
+	}
 } // namespace Engine
