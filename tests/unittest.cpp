@@ -1,5 +1,6 @@
 #include <catch2/catch_all.hpp>
 #include <catch2/catch_approx.hpp>
+#include <SFML/Graphics/Shape.hpp>
 #include <SFML/Graphics/ConvexShape.hpp>
 #include <math.hpp>
 
@@ -120,4 +121,28 @@ TEST_CASE("SAT", "[math]")
 	verticesB = Engine::getVertices(&shapeB);
 
 	REQUIRE(Engine::checkCollide(verticesA, verticesB) == true);
+}
+
+
+TEST_CASE("is shape is concave or is convex", "[math]")
+{
+	const int PENTAGON = 5;
+	const int RECT = 4;
+	sf::ConvexShape rect{ RECT };
+	rect.setPoint(0, { 0.f, 0.f });
+	rect.setPoint(1, { 0.f, 1.f });
+	rect.setPoint(2, { 1.f, 1.f });
+	rect.setPoint(3, { 1.f, 0.f });
+	REQUIRE_FALSE(Engine::isShapeConcave(&rect)); // convex
+
+	sf::ConvexShape pentagon{ PENTAGON };
+	pentagon.setPoint(0, { 0.f, 0.f });
+	pentagon.setPoint(1, { 0.f, 1.f });
+	pentagon.setPoint(2, { 0.5f, 0.5f });
+	pentagon.setPoint(3, { 1.f, 1.f });
+	pentagon.setPoint(4, { 1.f, 0.f });
+	REQUIRE(Engine::isShapeConcave(&pentagon)); // concave
+
+	pentagon.setPoint(2, { 0.5f, 1.5f });
+	REQUIRE_FALSE(Engine::isShapeConcave(&pentagon)); // convex
 }
