@@ -113,14 +113,26 @@ TEST_CASE("SAT", "[math]")
 	auto verticesA = Engine::getVertices(&shapeA);
 	auto verticesB = Engine::getVertices(&shapeB);
 
-	REQUIRE(Engine::checkCollide(verticesA, verticesB) == false);
+	sf::Vector2f MTV = Engine::checkCollide(verticesA, verticesB);
+	REQUIRE((MTV.x == 0.f && MTV.y == 0.f));
 	
 	// shift shapeB by 100 pixels to the left - collision must be detected
 	shapeB.move({ -100.f, 0.f });
 	verticesA = Engine::getVertices(&shapeA);
 	verticesB = Engine::getVertices(&shapeB);
 
-	REQUIRE(Engine::checkCollide(verticesA, verticesB) == true);
+	// react to collision
+	MTV = Engine::checkCollide(verticesA, verticesB);
+	shapeB.move(-MTV);
+
+	// check if the shapeB is moved and doesn't collide anymore
+	verticesA = Engine::getVertices(&shapeA);
+	verticesB = Engine::getVertices(&shapeB);
+	MTV = Engine::checkCollide(verticesA, verticesB);
+	float lengthMTV = std::sqrt(MTV.x * MTV.x + MTV.y * MTV.y);
+	
+	const float MARGIN = 1e-2f;
+	REQUIRE(Catch::Approx(lengthMTV).margin(MARGIN) == 0.f);
 }
 
 
