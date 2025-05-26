@@ -207,6 +207,17 @@ namespace Engine
 			}
 		}		
 
+		sf::Vector2f Acentroid = centroid(aShapeVertices);
+		sf::Vector2f Bcentroid = centroid(bShapeVertices);
+		sf::Vector2f directionAB = Bcentroid - Acentroid;
+
+		// if the MTV and the direction from shape A to shape B are opposite, then dot = cos(pi) = -1
+		// which means you have to rotate MTV by pi (negate it)
+		if (dot(minimumTranslationVector, directionAB) == -1.f)
+		{
+			minimumTranslationVector = -minimumTranslationVector;
+		}
+
 		return minimumTranslationVector;
 	}
 
