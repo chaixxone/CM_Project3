@@ -171,3 +171,9 @@ TEST_CASE("shapes areas", "[math]")
 	sf::RectangleShape square{ {4.f, 4.f} };
 	REQUIRE(Engine::area(Engine::getVertices(&square)) == 16.f);
 }
+
+TEST_CASE("shape centroid", "[math]")
+{
+	sf::RectangleShape square{ {4.f, 4.f } };
+	REQUIRE(Engine::centroid(Engine::getVertices(&square)) == sf::Vector2{ 2.f, 2.f });
+}
