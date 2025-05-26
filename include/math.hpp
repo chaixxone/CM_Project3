@@ -81,9 +81,9 @@ namespace Engine
 	* @brief Checks two shapes for a collision between them. Uses SAT collision method.
 	* @param aShapeVertices: first shape verteces
 	* @param bShapeVertices: second shape verteces
-	* @return false if no collision detected, true if shapes are colliding
+	* @return zero vector if no collision detected, MTV if shapes are colliding
 	*/
-	bool checkCollide(const std::vector<sf::Vector2f>& aShapeVertices, const std::vector<sf::Vector2f>& bShapeVertices)
+	sf::Vector2f checkCollide(const std::vector<sf::Vector2f>& aShapeVertices, const std::vector<sf::Vector2f>& bShapeVertices)
 	{
 		auto aEdges = getShapeEdges(aShapeVertices);
 		auto bEdges = getShapeEdges(bShapeVertices);
@@ -94,17 +94,22 @@ namespace Engine
 		std::vector<float> projectionsA(aShapeVertices.size());
 		std::vector<float> projectionsB(bShapeVertices.size());
 
+		float lengthMTV = std::numeric_limits<float>::infinity();
+		sf::Vector2f minimumTranslationVector;
+
 		for (const auto& edge : allEdges)
 		{
+			sf::Vector2f normalVector = normal(edge.second - edge.first);
+
 			// make each vertex projections
 			for (size_t j = 0; j < aShapeVertices.size(); j++)
 			{
-				projectionsA[j] = projection(edge.first, edge.second, aShapeVertices[j]);
+				projectionsA[j] = projectionWithNormal(edge.first, normalVector, aShapeVertices[j]);
 			}
 
 			for (size_t j = 0; j < bShapeVertices.size(); j++)
 			{
-				projectionsB[j] = projection(edge.first, edge.second, bShapeVertices[j]);
+				projectionsB[j] = projectionWithNormal(edge.first, normalVector, bShapeVertices[j]);
 			}
 
 			// find minimum and maximum projections of each shape
@@ -124,8 +129,9 @@ namespace Engine
 			{
 				minProjectionB = std::min(minProjectionB, projectionsB[j]);
 				maxProjectionB = std::max(maxProjectionB, projectionsB[j]);
-			}
+			}			
 
+			float overlapVectorLength = 0.f;
 			/*
 			* collision checking rules
 			* 
@@ -139,19 +145,29 @@ namespace Engine
 			{
 				if (minProjectionB > maxProjectionA)
 				{
-					return false;
+					return sf::Vector2f{ 0.f, 0.f };
 				}
+
+				overlapVectorLength = maxProjectionA - minProjectionB;
 			}
 			else if (minProjectionA > minProjectionB)
 			{
 				if (minProjectionA > maxProjectionB)
 				{
-					return false;
+					return sf::Vector2f{ 0.f, 0.f };
 				}
+
+				overlapVectorLength = maxProjectionB - minProjectionA;
+			}
+
+			if (overlapVectorLength < lengthMTV)
+			{
+				lengthMTV = overlapVectorLength;
+				minimumTranslationVector = normalVector * lengthMTV;
 			}
 		}
 
-		return true;
+		return minimumTranslationVector;
 	}
 
 	/**
