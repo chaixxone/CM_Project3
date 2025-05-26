@@ -44,6 +44,26 @@ namespace Engine
 	}
 
 	/**
+	* @brief calculates centre point (centroid) of the shape by given vertices
+	* @param vertices: shape vertices
+	* @returns coordinates of centroid
+	*/
+	sf::Vector2f centroid(const std::vector<sf::Vector2f>& vertices)
+	{
+		float x = 0.f;
+		float y = 0.f;
+		float sArea = area(vertices);
+
+		for (size_t i = 0; i < vertices.size() - 1; i++)
+		{
+			x += (vertices[i].x * vertices[i + 1].x) * (vertices[i].x * vertices[i + 1].y - vertices[i + 1].x * vertices[i].y);
+			y += (vertices[i].y * vertices[i + 1].y) * (vertices[i].x * vertices[i + 1].y - vertices[i + 1].x * vertices[i].y);
+		}
+
+		return sf::Vector2f{ x, y } / (6 * sArea);
+	}
+
+	/**
 	* @brief calculates a point's projection onto a normal vector
 	* @param a: shape edge start
 	* @param b: shape edge end
