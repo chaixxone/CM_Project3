@@ -56,8 +56,9 @@ namespace Engine
 
 		for (size_t i = 0; i < vertices.size() - 1; i++)
 		{
-			x += (vertices[i].x * vertices[i + 1].x) * (vertices[i].x * vertices[i + 1].y - vertices[i + 1].x * vertices[i].y);
-			y += (vertices[i].y * vertices[i + 1].y) * (vertices[i].x * vertices[i + 1].y - vertices[i + 1].x * vertices[i].y);
+			float ratio = vertices[i].x * vertices[i + 1].y - vertices[i + 1].x * vertices[i].y;
+			x += (vertices[i].x * vertices[i + 1].x) * ratio;
+			y += (vertices[i].y * vertices[i + 1].y) * ratio;
 		}
 
 		return sf::Vector2f{ x, y } / (6 * sArea);
