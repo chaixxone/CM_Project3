@@ -31,7 +31,7 @@ namespace Engine
 	* @param vertices: shape vertices
 	* @returns shape area
 	*/
-	float area(const std::vector<sf::Vector2f>& vertices)
+	float orientedArea(const std::vector<sf::Vector2f>& vertices)
 	{
 		float sum = 0.f;
 
@@ -40,7 +40,7 @@ namespace Engine
 			sum += vertices[i].x * vertices[i + 1].y - vertices[i + 1].x * vertices[i].y;
 		}
 
-		return std::abs(sum / 2);
+		return sum / 2;
 	}
 
 	/**
@@ -52,7 +52,7 @@ namespace Engine
 	{
 		float x = 0.f;
 		float y = 0.f;
-		float sArea = area(vertices);
+		float sArea = orientedArea(vertices);
 
 		for (size_t i = 0; i < vertices.size() - 1; i++)
 		{
