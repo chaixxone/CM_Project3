@@ -123,6 +123,8 @@ namespace Engine
 	*/
 	sf::Vector2f checkCollide(const std::vector<sf::Vector2f>& aShapeVertices, const std::vector<sf::Vector2f>& bShapeVertices)
 	{
+		static sf::Vector2f ZERO_VECTOR{ 0.f, 0.f };
+
 		auto aEdges = getShapeEdges(aShapeVertices);
 		auto bEdges = getShapeEdges(bShapeVertices);
 
@@ -183,7 +185,7 @@ namespace Engine
 			{
 				if (minProjectionB > maxProjectionA)
 				{
-					return sf::Vector2f{ 0.f, 0.f };
+					return ZERO_VECTOR;
 				}
 
 				overlapVectorLength = maxProjectionA - minProjectionB;
@@ -192,7 +194,7 @@ namespace Engine
 			{
 				if (minProjectionA > maxProjectionB)
 				{
-					return sf::Vector2f{ 0.f, 0.f };
+					return ZERO_VECTOR;
 				}
 
 				overlapVectorLength = maxProjectionB - minProjectionA;
@@ -203,7 +205,7 @@ namespace Engine
 				lengthMTV = overlapVectorLength;
 				minimumTranslationVector = normalVector * lengthMTV;
 			}
-		}
+		}		
 
 		return minimumTranslationVector;
 	}
