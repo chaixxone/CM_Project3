@@ -44,6 +44,20 @@ namespace Engine
 	}
 
 	/**
+	* @brief calculates a point's projection onto a normal vector
+	* @param start: shape edge start
+	* @param normalVector: edge's normal
+	* @param vertex: point for which to create a projection
+	* @returns point 1D projection onto a normal's axis
+	*/
+	float projectionWithNormal(const sf::Vector2f& start, const sf::Vector2f& normalVector, const sf::Vector2f& vertex)
+	{
+		sf::Vector2f vectorPoint = vertex - start;
+		float projection = Engine::dot(vectorPoint, normalVector);
+		return projection;
+	}
+
+	/**
 	* @brief calculates shape's edges as sf::Vector2f vectors
 	* @param shapeVertices: shape vertices coordinates
 	*/
