@@ -2,6 +2,7 @@
 #include <catch2/catch_approx.hpp>
 #include <SFML/Graphics/Shape.hpp>
 #include <SFML/Graphics/ConvexShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <math.hpp>
 
 TEST_CASE("Normal", "[math]")
@@ -157,4 +158,16 @@ TEST_CASE("is shape is concave or is convex", "[math]")
 
 	pentagon.setPoint(2, { 0.5f, 1.5f });
 	REQUIRE_FALSE(Engine::isShapeConcave(&pentagon)); // convex
+}
+
+TEST_CASE("shapes areas", "[math]")
+{
+	sf::ConvexShape egyptianTriangle{ 3 };
+	egyptianTriangle.setPoint(0, { 0.f, 0.f });
+	egyptianTriangle.setPoint(1, { 0.f, 3.f });
+	egyptianTriangle.setPoint(2, { 4.f, 3.f });
+	REQUIRE(Engine::area(Engine::getVertices(&egyptianTriangle)) == 6.f);
+
+	sf::RectangleShape square{ {4.f, 4.f} };
+	REQUIRE(Engine::area(Engine::getVertices(&square)) == 16.f);
 }
