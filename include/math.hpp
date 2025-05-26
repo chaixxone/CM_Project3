@@ -27,6 +27,23 @@ namespace Engine
 	}
 
 	/**
+	* @brief calculates area with given shape vertices
+	* @param vertices: shape vertices
+	* @returns shape area
+	*/
+	float area(const std::vector<sf::Vector2f>& vertices)
+	{
+		float sum = 0.f;
+
+		for (size_t i = 0; i < vertices.size() - 1; i++)
+		{
+			sum += vertices[i].x * vertices[i + 1].y - vertices[i + 1].x * vertices[i].y;
+		}
+
+		return std::abs(sum / 2);
+	}
+
+	/**
 	* @brief calculates a point's projection onto a normal vector
 	* @param a: shape edge start
 	* @param b: shape edge end
