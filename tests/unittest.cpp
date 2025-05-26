@@ -166,14 +166,21 @@ TEST_CASE("shapes areas", "[math]")
 	egyptianTriangle.setPoint(0, { 0.f, 0.f });
 	egyptianTriangle.setPoint(1, { 0.f, 3.f });
 	egyptianTriangle.setPoint(2, { 4.f, 3.f });
-	REQUIRE(Engine::area(Engine::getVertices(&egyptianTriangle)) == 6.f);
+	float triangleArea = std::abs(Engine::orientedArea(Engine::getVertices(&egyptianTriangle)));
+	float expectedTriangleArea = 6.f;
+	REQUIRE(triangleArea == expectedTriangleArea);
 
-	sf::RectangleShape square{ {4.f, 4.f} };
-	REQUIRE(Engine::area(Engine::getVertices(&square)) == 16.f);
+	const float SQUARE_SIDE = 4.f;
+	sf::RectangleShape square{ { SQUARE_SIDE, SQUARE_SIDE } };
+	float squareArea = std::abs(Engine::orientedArea(Engine::getVertices(&square)));
+	float expectedSquareArea = SQUARE_SIDE * SQUARE_SIDE;
+	REQUIRE(squareArea == expectedSquareArea);
 }
 
 TEST_CASE("shape centroid", "[math]")
 {
 	sf::RectangleShape square{ {4.f, 4.f } };
-	REQUIRE(Engine::centroid(Engine::getVertices(&square)) == sf::Vector2{ 2.f, 2.f });
+	sf::Vector2f centroid = Engine::centroid(Engine::getVertices(&square));
+	INFO("Square centroid: (" << centroid.x << "; " << centroid.y << ")");
+	REQUIRE(centroid == sf::Vector2{ 2.f, 2.f });
 }
