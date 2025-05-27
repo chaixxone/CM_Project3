@@ -22,8 +22,13 @@ int main()
 	movableMapRect.setRotation(-12);		
 	staticMapRect.setPosition({ 600, 300 });
 
+	const float g = 0.00005f;
+	float currentObjFallVelocity = 0.f;
+
 	while (window.isOpen())
 	{
+		currentObjFallVelocity += g;
+
 		sf::Event event;
 
 		while (window.pollEvent(event))
@@ -51,6 +56,7 @@ int main()
 					break;
 				case sf::Keyboard::Up:
 					movableMapRect.move(sf::Vector2f{ 0.f, -VELOCITY });
+					currentObjFallVelocity = 0.f;
 					break;
 				case sf::Keyboard::Left:
 					movableMapRect.move(sf::Vector2f{ -VELOCITY, 0.f });
@@ -110,6 +116,7 @@ int main()
 			{
 				obj.setFillColor(sf::Color::Red);
 				obj.move(MTV);
+				currentObjFallVelocity = 0.f;
 			}
 		}
 
@@ -121,6 +128,8 @@ int main()
 		obj.setFillColor(sf::Color::White);
 		movableMapRect.setFillColor(sf::Color::White);
 		staticMapRect.setFillColor(sf::Color::White);
+		
+		obj.move({ 0.f, currentObjFallVelocity });
 
 		window.display();
 	}
