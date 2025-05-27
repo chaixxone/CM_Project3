@@ -2,6 +2,7 @@
 #include <catch2/catch_approx.hpp>
 #include <SFML/Graphics/Shape.hpp>
 #include <SFML/Graphics/ConvexShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <math.hpp>
 
 TEST_CASE("normal", "[math]")
@@ -20,17 +21,11 @@ TEST_CASE("Projection", "[math]")
 
 	sf::Vector2f normalVector = Engine::normal(fillerPoint - origin);
 	float distanceNormal = Engine::projection(origin, fillerPoint, point);
-
-	sf::Vector2f productDistanceNormal = normalVector * distanceNormal;
-	sf::Vector2f projectionPoint = point - productDistanceNormal;
-	INFO("projectionPoint = (" << projectionPoint.x << ", " << projectionPoint.y << ")");
-
-	sf::Vector2f expected{ 7.38f, 5.715f };
-
+	
+	float expected = 4.69f;
 	float tolerance = 1e-2f;
 	// make sure that the 2D coordinates of projected point are close to the expected coordinates
-	REQUIRE(Catch::Approx(projectionPoint.x).margin(tolerance) == expected.x);
-	REQUIRE(Catch::Approx(projectionPoint.y).margin(tolerance) == expected.y);
+	REQUIRE(Catch::Approx(distanceNormal).margin(tolerance) == expected);
 }
 
 TEST_CASE("Shape's vertices", "[math]")
@@ -113,14 +108,26 @@ TEST_CASE("SAT", "[math]")
 	auto verticesA = Engine::getVertices(&shapeA);
 	auto verticesB = Engine::getVertices(&shapeB);
 
-	REQUIRE(Engine::checkCollide(verticesA, verticesB) == false);
+	sf::Vector2f MTV = Engine::checkCollide(verticesA, verticesB);
+	REQUIRE((MTV.x == 0.f && MTV.y == 0.f));
 	
 	// shift shapeB by 100 pixels to the left - collision must be detected
 	shapeB.move({ -100.f, 0.f });
 	verticesA = Engine::getVertices(&shapeA);
 	verticesB = Engine::getVertices(&shapeB);
 
-	REQUIRE(Engine::checkCollide(verticesA, verticesB) == true);
+	// react to collision
+	MTV = Engine::checkCollide(verticesA, verticesB);
+	shapeB.move(-MTV);
+
+	// check if the shapeB is moved and doesn't collide anymore
+	verticesA = Engine::getVertices(&shapeA);
+	verticesB = Engine::getVertices(&shapeB);
+	MTV = Engine::checkCollide(verticesA, verticesB);
+	float lengthMTV = std::sqrt(MTV.x * MTV.x + MTV.y * MTV.y);
+	
+	const float MARGIN = 1e-2f;
+	REQUIRE(Catch::Approx(lengthMTV).margin(MARGIN) == 0.f);
 }
 
 
@@ -145,4 +152,29 @@ TEST_CASE("is shape is concave or is convex", "[math]")
 
 	pentagon.setPoint(2, { 0.5f, 1.5f });
 	REQUIRE_FALSE(Engine::isShapeConcave(&pentagon)); // convex
+}
+
+TEST_CASE("shapes areas", "[math]")
+{
+	sf::ConvexShape egyptianTriangle{ 3 };
+	egyptianTriangle.setPoint(0, { 0.f, 0.f });
+	egyptianTriangle.setPoint(1, { 0.f, 3.f });
+	egyptianTriangle.setPoint(2, { 4.f, 3.f });
+	float triangleArea = std::abs(Engine::orientedArea(Engine::getVertices(&egyptianTriangle)));
+	float expectedTriangleArea = 6.f;
+	REQUIRE(triangleArea == expectedTriangleArea);
+
+	const float SQUARE_SIDE = 4.f;
+	sf::RectangleShape square{ { SQUARE_SIDE, SQUARE_SIDE } };
+	float squareArea = std::abs(Engine::orientedArea(Engine::getVertices(&square)));
+	float expectedSquareArea = SQUARE_SIDE * SQUARE_SIDE;
+	REQUIRE(squareArea == expectedSquareArea);
+}
+
+TEST_CASE("shape centroid", "[math]")
+{
+	sf::RectangleShape square{ {4.f, 4.f } };
+	sf::Vector2f centroid = Engine::centroid(Engine::getVertices(&square));
+	INFO("Square centroid: (" << centroid.x << "; " << centroid.y << ")");
+	REQUIRE(centroid == sf::Vector2{ 2.f, 2.f });
 }

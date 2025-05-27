@@ -27,6 +27,44 @@ namespace Engine
 	}
 
 	/**
+	* @brief calculates area with given shape vertices
+	* @param vertices: shape vertices
+	* @returns shape area
+	*/
+	float orientedArea(const std::vector<sf::Vector2f>& vertices)
+	{
+		float sum = 0.f;
+
+		for (size_t i = 0; i < vertices.size() - 1; i++)
+		{
+			sum += vertices[i].x * vertices[i + 1].y - vertices[i + 1].x * vertices[i].y;
+		}
+
+		return sum / 2;
+	}
+
+	/**
+	* @brief calculates centre point (centroid) of the shape by given vertices
+	* @param vertices: shape vertices
+	* @returns coordinates of centroid
+	*/
+	sf::Vector2f centroid(const std::vector<sf::Vector2f>& vertices)
+	{
+		float x = 0.f;
+		float y = 0.f;
+		float sArea = orientedArea(vertices);
+
+		for (size_t i = 0; i < vertices.size() - 1; i++)
+		{
+			float ratio = vertices[i].x * vertices[i + 1].y - vertices[i + 1].x * vertices[i].y;
+			x += (vertices[i].x + vertices[i + 1].x) * ratio;
+			y += (vertices[i].y + vertices[i + 1].y) * ratio;
+		}
+
+		return sf::Vector2f{ x, y } / (6 * sArea);
+	}
+
+	/**
 	* @brief calculates a point's projection onto a normal vector
 	* @param a: shape edge start
 	* @param b: shape edge end
@@ -36,10 +74,20 @@ namespace Engine
 	{
 		sf::Vector2f line = b - a;
 		sf::Vector2f normalVector = normal(line);
+		float projection = Engine::dot(vertex, normalVector);
+		return projection;
+	}
 
-		sf::Vector2f vectorPoint = vertex - a;
-		float projection = dot(vectorPoint, normalVector);
-
+	/**
+	* @brief calculates a point's projection onto a normal vector
+	* @param start: shape edge start
+	* @param normalVector: edge's normal
+	* @param vertex: point for which to create a projection
+	* @returns point 1D projection onto a normal's axis
+	*/
+	float projectionWithNormal(const sf::Vector2f& start, const sf::Vector2f& normalVector, const sf::Vector2f& vertex)
+	{
+		float projection = Engine::dot(vertex, normalVector);
 		return projection;
 	}
 
@@ -67,10 +115,12 @@ namespace Engine
 	* @brief Checks two shapes for a collision between them. Uses SAT collision method.
 	* @param aShapeVertices: first shape verteces
 	* @param bShapeVertices: second shape verteces
-	* @return false if no collision detected, true if shapes are colliding
+	* @return zero vector if no collision detected, MTV if shapes are colliding
 	*/
-	bool checkCollide(const std::vector<sf::Vector2f>& aShapeVertices, const std::vector<sf::Vector2f>& bShapeVertices)
+	sf::Vector2f checkCollide(const std::vector<sf::Vector2f>& aShapeVertices, const std::vector<sf::Vector2f>& bShapeVertices)
 	{
+		static sf::Vector2f ZERO_VECTOR{ 0.f, 0.f };
+
 		auto aEdges = getShapeEdges(aShapeVertices);
 		auto bEdges = getShapeEdges(bShapeVertices);
 
@@ -80,17 +130,22 @@ namespace Engine
 		std::vector<float> projectionsA(aShapeVertices.size());
 		std::vector<float> projectionsB(bShapeVertices.size());
 
+		float lengthMTV = std::numeric_limits<float>::infinity();
+		sf::Vector2f minimumTranslationVector;
+
 		for (const auto& edge : allEdges)
 		{
+			sf::Vector2f normalVector = normal(edge.second - edge.first);
+
 			// make each vertex projections
 			for (size_t j = 0; j < aShapeVertices.size(); j++)
 			{
-				projectionsA[j] = projection(edge.first, edge.second, aShapeVertices[j]);
+				projectionsA[j] = projectionWithNormal(edge.first, normalVector, aShapeVertices[j]);
 			}
 
 			for (size_t j = 0; j < bShapeVertices.size(); j++)
 			{
-				projectionsB[j] = projection(edge.first, edge.second, bShapeVertices[j]);
+				projectionsB[j] = projectionWithNormal(edge.first, normalVector, bShapeVertices[j]);
 			}
 
 			// find minimum and maximum projections of each shape
@@ -112,12 +167,13 @@ namespace Engine
 				maxProjectionB = std::max(maxProjectionB, projectionsB[j]);
 			}
 
+			float overlapVectorLength = 0.f;
 			/*
 			* collision checking rules
-			* 
+			*
 			* for Amin < Bmin
 			* Amin--------Bmin=====Amax--------Bmax
-			* 			      
+			*
 			* for Amin > Bmin
 			* Bmin--------Amin=====Bmax--------Amax
 			*/
@@ -125,19 +181,40 @@ namespace Engine
 			{
 				if (minProjectionB > maxProjectionA)
 				{
-					return false;
+					return ZERO_VECTOR;
 				}
+
+				overlapVectorLength = maxProjectionA - minProjectionB;
 			}
 			else if (minProjectionA > minProjectionB)
 			{
 				if (minProjectionA > maxProjectionB)
 				{
-					return false;
+					return ZERO_VECTOR;
 				}
+
+				overlapVectorLength = maxProjectionB - minProjectionA;
+			}
+
+			if (overlapVectorLength < lengthMTV)
+			{
+				lengthMTV = overlapVectorLength;
+				minimumTranslationVector = normalVector * lengthMTV;
 			}
 		}
 
-		return true;
+		sf::Vector2f Acentroid = centroid(aShapeVertices);
+		sf::Vector2f Bcentroid = centroid(bShapeVertices);
+		sf::Vector2f directionAB = Acentroid - Bcentroid;
+
+		// if the MTV and the direction from shape A to shape B are opposite, then dit(AB, MTV) < 0
+		// which means you have to rotate MTV by pi (negate it)
+		if (dot(minimumTranslationVector, directionAB) < 0.f)
+		{
+			minimumTranslationVector = -minimumTranslationVector;
+		}
+
+		return minimumTranslationVector;
 	}
 
 	/**
