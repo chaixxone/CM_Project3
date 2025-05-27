@@ -76,7 +76,7 @@ namespace Engine
 		sf::Vector2f normalVector = normal(line);
 
 		sf::Vector2f vectorPoint = vertex - a;
-		float projection = Engine::dot(vectorPoint, normalVector);
+		float projection = Engine::dot(vertex, normalVector);
 
 		return projection;
 	}
@@ -91,7 +91,7 @@ namespace Engine
 	float projectionWithNormal(const sf::Vector2f& start, const sf::Vector2f& normalVector, const sf::Vector2f& vertex)
 	{
 		sf::Vector2f vectorPoint = vertex - start;
-		float projection = Engine::dot(vectorPoint, normalVector);
+		float projection = Engine::dot(vertex, normalVector);
 		return projection;
 	}
 
@@ -203,6 +203,17 @@ namespace Engine
 				lengthMTV = overlapVectorLength;
 				minimumTranslationVector = normalVector * lengthMTV;
 			}
+		}
+
+		sf::Vector2f Acentroid = centroid(aShapeVertices);
+		sf::Vector2f Bcentroid = centroid(bShapeVertices);
+		sf::Vector2f directionAB = Acentroid - Bcentroid;
+
+		// if the MTV and the direction from shape A to shape B are opposite, then dit(AB, MTV) < 0
+		// which means you have to rotate MTV by pi (negate it)
+		if (dot(minimumTranslationVector, directionAB) < 0.f)
+		{
+			minimumTranslationVector = -minimumTranslationVector;
 		}
 
 		return minimumTranslationVector;
