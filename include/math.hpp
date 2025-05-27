@@ -74,10 +74,7 @@ namespace Engine
 	{
 		sf::Vector2f line = b - a;
 		sf::Vector2f normalVector = normal(line);
-
-		sf::Vector2f vectorPoint = vertex - a;
 		float projection = Engine::dot(vertex, normalVector);
-
 		return projection;
 	}
 
@@ -90,7 +87,6 @@ namespace Engine
 	*/
 	float projectionWithNormal(const sf::Vector2f& start, const sf::Vector2f& normalVector, const sf::Vector2f& vertex)
 	{
-		sf::Vector2f vectorPoint = vertex - start;
 		float projection = Engine::dot(vertex, normalVector);
 		return projection;
 	}
