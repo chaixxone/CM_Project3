@@ -123,6 +123,8 @@ namespace Engine
 	*/
 	sf::Vector2f checkCollide(const std::vector<sf::Vector2f>& aShapeVertices, const std::vector<sf::Vector2f>& bShapeVertices)
 	{
+		static sf::Vector2f ZERO_VECTOR{ 0.f, 0.f };
+
 		auto aEdges = getShapeEdges(aShapeVertices);
 		auto bEdges = getShapeEdges(bShapeVertices);
 
@@ -183,7 +185,7 @@ namespace Engine
 			{
 				if (minProjectionB > maxProjectionA)
 				{
-					return sf::Vector2f{ 0.f, 0.f };
+					return ZERO_VECTOR;
 				}
 
 				overlapVectorLength = maxProjectionA - minProjectionB;
@@ -192,7 +194,7 @@ namespace Engine
 			{
 				if (minProjectionA > maxProjectionB)
 				{
-					return sf::Vector2f{ 0.f, 0.f };
+					return ZERO_VECTOR;
 				}
 
 				overlapVectorLength = maxProjectionB - minProjectionA;
@@ -203,6 +205,17 @@ namespace Engine
 				lengthMTV = overlapVectorLength;
 				minimumTranslationVector = normalVector * lengthMTV;
 			}
+		}		
+
+		sf::Vector2f Acentroid = centroid(aShapeVertices);
+		sf::Vector2f Bcentroid = centroid(bShapeVertices);
+		sf::Vector2f directionAB = Bcentroid - Acentroid;
+
+		// if the MTV and the direction from shape A to shape B are opposite, then dot = cos(pi) = -1
+		// which means you have to rotate MTV by pi (negate it)
+		if (dot(minimumTranslationVector, directionAB) == -1.f)
+		{
+			minimumTranslationVector = -minimumTranslationVector;
 		}
 
 		sf::Vector2f Acentroid = centroid(aShapeVertices);
