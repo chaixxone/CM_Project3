@@ -116,7 +116,7 @@ int main()
 			{
 				obj.setFillColor(sf::Color::Red);
 				obj.move(MTV);
-				currentObjFallVelocity = 0.f;
+				currentObjFallVelocity /= 1.2f;
 			}
 		}
 
