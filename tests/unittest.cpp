@@ -177,4 +177,10 @@ TEST_CASE("shape centroid", "[math]")
 	sf::Vector2f centroid = Engine::centroid(Engine::getVertices(&square));
 	INFO("Square centroid: (" << centroid.x << "; " << centroid.y << ")");
 	REQUIRE(centroid == sf::Vector2{ 2.f, 2.f });
+	
+	square.move({ 3.f, 0.f });
+	sf::Vector2f movedExpected{ 5.f, 2.f };
+	centroid = Engine::centroid(Engine::getVertices(&square));
+	INFO("Square centroid: (" << centroid.x << "; " << centroid.y << ")");
+	REQUIRE(movedExpected == centroid);
 }
