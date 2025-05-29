@@ -35,9 +35,10 @@ namespace Engine
 	{
 		float sum = 0.f;
 
-		for (size_t i = 0; i < vertices.size() - 1; i++)
+		for (size_t i = 0; i < vertices.size(); i++)
 		{
-			sum += vertices[i].x * vertices[i + 1].y - vertices[i + 1].x * vertices[i].y;
+			size_t nextIndex = (i + 1) % vertices.size();
+			sum += vertices[i].x * vertices[nextIndex].y - vertices[nextIndex].x * vertices[i].y;
 		}
 
 		return sum / 2;
@@ -54,11 +55,12 @@ namespace Engine
 		float y = 0.f;
 		float sArea = orientedArea(vertices);
 
-		for (size_t i = 0; i < vertices.size() - 1; i++)
+		for (size_t i = 0; i < vertices.size(); i++)
 		{
-			float ratio = vertices[i].x * vertices[i + 1].y - vertices[i + 1].x * vertices[i].y;
-			x += (vertices[i].x + vertices[i + 1].x) * ratio;
-			y += (vertices[i].y + vertices[i + 1].y) * ratio;
+			size_t nextIndex = (i + 1) % vertices.size();
+			float ratio = vertices[i].x * vertices[nextIndex].y - vertices[nextIndex].x * vertices[i].y;
+			x += (vertices[i].x + vertices[nextIndex].x) * ratio;
+			y += (vertices[i].y + vertices[nextIndex].y) * ratio;
 		}
 
 		return sf::Vector2f{ x, y } / (6 * sArea);
