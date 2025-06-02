@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <vector>
+#include <unordered_set>
 #include <SFML/System.hpp>
 #include <SFML/Graphics/Shape.hpp>
 #include <optional>
@@ -180,9 +181,18 @@ namespace Engine
 		sf::Vector2f pointOfCollision;
 		sf::Vector2f minimumTranslationVector;		
 
+		std::unordered_set<sf::Vector2f, VectorHash, VectorCollinear> axes;
+
 		for (const auto& edge : allEdges)
 		{
 			sf::Vector2f edgeVector = edge.second - edge.first;
+
+			if (axes.contains(edgeVector))
+			{
+				continue;
+			}
+
+			axes.insert(edgeVector);
 			sf::Vector2f normalVector = normal(edgeVector);
 			float edgeMagnitude = std::sqrt(edgeVector.x * edgeVector.x + edgeVector.y * edgeVector.y);
 			sf::Vector2f edgeNormalisedVector = edgeVector / edgeMagnitude;
