@@ -19,6 +19,12 @@ namespace Engine
 		Projection(float projection, const sf::Vector2f& point)
 			: _projectionOntoNormal(projection), _projectedPoint(point) {}
 
+		void operator=(const Projection& other)
+		{
+			_projectionOntoNormal = other._projectionOntoNormal;
+			_projectedPoint = other._projectedPoint;
+		}
+
 		auto operator<=>(const Projection& other) const
 		{
 			return _projectionOntoNormal <=> other._projectionOntoNormal;
@@ -36,6 +42,6 @@ namespace Engine
 
 	private:
 		float _projectionOntoNormal;
-		const sf::Vector2f _projectedPoint;
+		sf::Vector2f _projectedPoint;
 	};
 } // namespace Engine
