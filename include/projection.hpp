@@ -12,6 +12,11 @@ namespace Engine
 	{
 	public:
 		/**
+		* @brief Default constructor
+		*/
+		Projection() : _projectionOntoNormal(0.f), _projectedPoint(sf::Vector2f{ 0.f, 0.f }) {}
+
+		/**
 		* @brief Creates Projection object
 		* @param projection: value of 1D projection onto a normal
 		* @param point: the point that is projected onto a normal
