@@ -5,6 +5,8 @@
 #include <SFML/System.hpp>
 #include <SFML/Graphics/Shape.hpp>
 
+#include <projection.hpp>
+
 namespace Engine
 {
 	/**
@@ -129,8 +131,8 @@ namespace Engine
 		std::vector<std::pair<sf::Vector2f, sf::Vector2f>> allEdges = aEdges;
 		std::ranges::copy(bEdges, std::back_inserter(allEdges));
 
-		std::vector<float> projectionsA(aShapeVertices.size());
-		std::vector<float> projectionsB(bShapeVertices.size());
+		std::vector<Projection> projectionsA(aShapeVertices.size());
+		std::vector<Projection> projectionsB(bShapeVertices.size());
 
 		float lengthMTV = std::numeric_limits<float>::infinity();
 		sf::Vector2f minimumTranslationVector;
@@ -142,17 +144,19 @@ namespace Engine
 			// make each vertex projections
 			for (size_t j = 0; j < aShapeVertices.size(); j++)
 			{
-				projectionsA[j] = projectionWithNormal(edge.first, normalVector, aShapeVertices[j]);
+				float projection = projectionWithNormal(edge.first, normalVector, aShapeVertices[j]);
+				projectionsA[j] = Projection{ projection, aShapeVertices[j] };
 			}
 
 			for (size_t j = 0; j < bShapeVertices.size(); j++)
 			{
-				projectionsB[j] = projectionWithNormal(edge.first, normalVector, bShapeVertices[j]);
+				float projection = projectionWithNormal(edge.first, normalVector, bShapeVertices[j]);
+				projectionsB[j] = Projection{ projection, bShapeVertices[j] };
 			}
 
 			// find minimum and maximum projections of each shape
-			float minProjectionA = projectionsA[0];
-			float maxProjectionA = projectionsA[0];
+			Projection minProjectionA = projectionsA[0];
+			Projection maxProjectionA = projectionsA[0];
 
 			for (size_t j = 1; j < projectionsA.size(); j++)
 			{
@@ -160,8 +164,8 @@ namespace Engine
 				maxProjectionA = std::max(maxProjectionA, projectionsA[j]);
 			}
 
-			float minProjectionB = projectionsB[0];
-			float maxProjectionB = projectionsB[0];
+			Projection minProjectionB = projectionsB[0];
+			Projection maxProjectionB = projectionsB[0];
 
 			for (size_t j = 1; j < projectionsB.size(); j++)
 			{
