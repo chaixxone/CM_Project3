@@ -117,6 +117,14 @@ namespace Engine
 		return edges;
 	}			
 
+	struct VectorCollinear
+	{
+		bool operator()(const sf::Vector2f& left, const sf::Vector2f& right) const
+		{
+			return cross(left, right) == 0.f;
+		}
+	};
+
 	/**
 	* @brief Checks two shapes for a collision between them. Uses SAT collision method and forms collision response
 	* @param aShapeVertices: first shape verteces
