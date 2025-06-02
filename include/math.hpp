@@ -87,12 +87,11 @@ namespace Engine
 
 	/**
 	* @brief calculates a point's projection onto a normal vector
-	* @param start: shape edge start
 	* @param normalVector: edge's normal
 	* @param vertex: point for which to create a projection
 	* @returns point 1D projection onto a normal's axis
 	*/
-	float projectionWithNormal(const sf::Vector2f& start, const sf::Vector2f& normalVector, const sf::Vector2f& vertex)
+	float projectionWithNormal(const sf::Vector2f& normalVector, const sf::Vector2f& vertex)
 	{
 		float projection = Engine::dot(vertex, normalVector);
 		return projection;
@@ -200,13 +199,13 @@ namespace Engine
 			// make each vertex projections
 			for (size_t j = 0; j < aShapeVertices.size(); j++)
 			{
-				float projection = projectionWithNormal(edge.first, normalVector, aShapeVertices[j]);
+				float projection = projectionWithNormal(normalVector, aShapeVertices[j]);
 				projectionsA[j] = Projection{ projection, aShapeVertices[j] };
 			}
 
 			for (size_t j = 0; j < bShapeVertices.size(); j++)
 			{
-				float projection = projectionWithNormal(edge.first, normalVector, bShapeVertices[j]);
+				float projection = projectionWithNormal(normalVector, bShapeVertices[j]);
 				projectionsB[j] = Projection{ projection, bShapeVertices[j] };
 			}
 
