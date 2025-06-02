@@ -115,7 +115,7 @@ namespace Engine
 		edges[LAST] = std::make_pair(shapeVertices[LAST], shapeVertices[0]);
 
 		return edges;
-	}	
+	}			
 
 	/**
 	* @brief Checks two shapes for a collision between them. Uses SAT collision method and forms collision response
@@ -142,7 +142,10 @@ namespace Engine
 
 		for (const auto& edge : allEdges)
 		{
-			sf::Vector2f normalVector = normal(edge.second - edge.first);
+			sf::Vector2f edgeVector = edge.second - edge.first;
+			sf::Vector2f normalVector = normal(edgeVector);
+			float edgeMagnitude = std::sqrt(edgeVector.x * edgeVector.x + edgeVector.y * edgeVector.y);
+			sf::Vector2f edgeNormalisedVector = edgeVector / edgeMagnitude;
 
 			// make each vertex projections
 			for (size_t j = 0; j < aShapeVertices.size(); j++)
