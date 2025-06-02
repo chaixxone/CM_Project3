@@ -28,6 +28,28 @@ TEST_CASE("Projection", "[math]")
 	REQUIRE(Catch::Approx(distanceNormal).margin(tolerance) == expected);
 }
 
+TEST_CASE("Projection to 2D Point", "[math]")
+{
+	const sf::Vector2f expected{ 8.f, 8.f };
+
+	sf::Vector2f A{ 5.f, 5.f };
+	sf::Vector2f B{ 6.f, 5.3f };
+
+	sf::Vector2f AB = B - A;
+	sf::Vector2f normalisedAB = AB / std::sqrt(AB.x * AB.x + AB.y * AB.y);
+	sf::Vector2f normal = Engine::normal(AB);
+
+	const float projectionAB = Engine::dot(expected, normalisedAB);
+	const float projectionNormal = Engine::dot(expected, normal);
+
+	sf::Vector2f calculatedPoint = projectionAB * normalisedAB + projectionNormal * normal;
+	INFO("calulated point: " << calculatedPoint.x << ' ' << calculatedPoint.y);
+
+	float tolerance = 1e-2f;
+	REQUIRE(Catch::Approx(calculatedPoint.x).margin(tolerance) == expected.x);
+	REQUIRE(Catch::Approx(calculatedPoint.y).margin(tolerance) == expected.y);
+}
+
 TEST_CASE("Shape's vertices", "[math]")
 {
 	const int PENTAGON = 5;
