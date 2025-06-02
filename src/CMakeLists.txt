@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories("../include/")
 
-add_executable(app main.cpp  "../include/math.hpp")
+add_executable(app main.cpp  "../include/math.hpp" "../include/projection.hpp")
 
 find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
 target_link_libraries(app PRIVATE sfml-system sfml-graphics sfml-window)
