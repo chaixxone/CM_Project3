@@ -115,7 +115,18 @@ namespace Engine
 		edges[LAST] = std::make_pair(shapeVertices[LAST], shapeVertices[0]);
 
 		return edges;
-	}			
+	}		
+
+	/**
+	* @brief Calculates 2-dimensional cross product of vectors
+	* @param a: first vector
+	* @param b: second vector
+	* @return the direction of vectors rotation
+	*/
+	float cross(const sf::Vector2f& a, const sf::Vector2f& b)
+	{
+		return a.x * b.y - b.x * a.y;
+	}
 
 	struct VectorCollinear
 	{
@@ -279,18 +290,7 @@ namespace Engine
 		}
 
 		return verteces;
-	}
-
-	/**
-	* @brief Calculates 2-dimensional cross product of vectors
-	* @param a: first vector 
-	* @param b: second vector
-	* @return the direction of vectors rotation
-	*/
-	float cross(const sf::Vector2f& a, const sf::Vector2f& b)
-	{
-		return a.x * b.y - b.x * a.y;
-	}
+	}	
 
 	/**
 	* @brief Checks if the shape is concave
