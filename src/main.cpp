@@ -110,10 +110,11 @@ int main()
 
 		for (const auto& part : partsCollideCheck)
 		{
-			sf::Vector2f MTV = Engine::checkCollide(objVertices, Engine::getVertices(part));
+			std::optional<Engine::CollisionResponse> response = Engine::checkCollide(objVertices, Engine::getVertices(part));
 
-			if (MTV.x != 0.f || MTV.y != 0.f)
+			if (response != std::nullopt)
 			{
+				sf::Vector2f MTV = response->MinimumTransitionVector;
 				obj.setFillColor(sf::Color::Red);
 				obj.move(MTV);
 				currentObjFallVelocity /= 1.2f;
