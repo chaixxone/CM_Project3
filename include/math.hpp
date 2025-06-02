@@ -125,6 +125,27 @@ namespace Engine
 		}
 	};
 
+	struct VectorHash
+	{
+		std::size_t operator()(const sf::Vector2f& v) const
+		{
+			float magnitude = std::sqrt(v.x * v.x + v.y * v.y);
+
+			if (magnitude == 0.f)
+			{
+				return 0;
+			}
+
+			float nx = v.x / magnitude;
+			float ny = v.y / magnitude;
+
+			int ix = static_cast<int>(nx * 1000);
+			int iy = static_cast<int>(ny * 1000);
+
+			return std::hash<int>()(ix) ^ (std::hash<int>()(iy) << 1);
+		}
+	};
+
 	/**
 	* @brief Checks two shapes for a collision between them. Uses SAT collision method and forms collision response
 	* @param aShapeVertices: first shape verteces
