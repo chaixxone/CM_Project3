@@ -29,6 +29,11 @@ namespace Engine
 			return _projectedPoint;
 		}
 
+		float GetProjectionValue() const noexcept
+		{
+			return _projectionOntoNormal;
+		}
+
 		void operator=(const Projection& other)
 		{
 			_projectionOntoNormal = other._projectionOntoNormal;
