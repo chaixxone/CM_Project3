@@ -4,8 +4,10 @@
 #include <vector>
 #include <SFML/System.hpp>
 #include <SFML/Graphics/Shape.hpp>
+#include <optional>
 
 #include <projection.hpp>
+#include <collision_response.hpp>
 
 namespace Engine
 {
@@ -121,7 +123,7 @@ namespace Engine
 	* @param bShapeVertices: second shape verteces
 	* @return zero vector if no collision detected, MTV if shapes are colliding
 	*/
-	sf::Vector2f checkCollide(const std::vector<sf::Vector2f>& aShapeVertices, const std::vector<sf::Vector2f>& bShapeVertices)
+	std::optional<CollisionResponse> checkCollide(const std::vector<sf::Vector2f>& aShapeVertices, const std::vector<sf::Vector2f>& bShapeVertices)
 	{
 		static sf::Vector2f ZERO_VECTOR{ 0.f, 0.f };
 
@@ -135,7 +137,8 @@ namespace Engine
 		std::vector<Projection> projectionsB(bShapeVertices.size());
 
 		float lengthMTV = std::numeric_limits<float>::infinity();
-		sf::Vector2f minimumTranslationVector;
+		sf::Vector2f pointOfCollision;
+		sf::Vector2f minimumTranslationVector;		
 
 		for (const auto& edge : allEdges)
 		{
@@ -187,19 +190,21 @@ namespace Engine
 			{
 				if (minProjectionB > maxProjectionA)
 				{
-					return ZERO_VECTOR;
+					return std::nullopt;
 				}
 
 				overlapVectorLength = maxProjectionA - minProjectionB;
+				pointOfCollision = maxProjectionA.GetPoint();
 			}
 			else if (minProjectionA > minProjectionB)
 			{
 				if (minProjectionA > maxProjectionB)
 				{
-					return ZERO_VECTOR;
+					return std::nullopt;
 				}
 
 				overlapVectorLength = maxProjectionB - minProjectionA;
+				pointOfCollision = minProjectionA.GetPoint();
 			}
 
 			if (overlapVectorLength < lengthMTV)
@@ -220,7 +225,9 @@ namespace Engine
 			minimumTranslationVector = -minimumTranslationVector;
 		}
 
-		return minimumTranslationVector;
+		CollisionResponse response{ pointOfCollision, minimumTranslationVector };
+
+		return std::optional<CollisionResponse>{ response };
 	}
 
 	/**
