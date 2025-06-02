@@ -6,7 +6,7 @@
 
 int main()
 {
-	sf::RenderWindow window{ sf::VideoMode{800, 600}, "window" };
+	sf::RenderWindow window{ sf::VideoMode{ 1280, 720 }, "window" };
 
 	sf::RectangleShape obj({ 200, 100 });
 	
