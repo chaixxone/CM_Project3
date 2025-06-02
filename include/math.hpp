@@ -123,7 +123,7 @@ namespace Engine
 	* @param bShapeVertices: second shape verteces
 	* @return std::nullopt if no collision detected, CollisionResponse in std::optinal when there is collision
 	*/
-	std::optional<CollisionResponse> checkCollide(const std::vector<sf::Vector2f>& aShapeVertices, const std::vector<sf::Vector2f>& bShapeVertices)
+	std::optional<CollisionResponse> processCollision(const std::vector<sf::Vector2f>& aShapeVertices, const std::vector<sf::Vector2f>& bShapeVertices)
 	{
 		static sf::Vector2f ZERO_VECTOR{ 0.f, 0.f };
 

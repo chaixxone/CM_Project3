@@ -130,7 +130,7 @@ TEST_CASE("SAT", "[math]")
 	auto verticesA = Engine::getVertices(&shapeA);
 	auto verticesB = Engine::getVertices(&shapeB);
 
-	sf::Vector2f MTV = Engine::checkCollide(verticesA, verticesB);
+	sf::Vector2f MTV = Engine::processCollision(verticesA, verticesB);
 	REQUIRE((MTV.x == 0.f && MTV.y == 0.f));
 	
 	// shift shapeB by 100 pixels to the left - collision must be detected
@@ -139,13 +139,13 @@ TEST_CASE("SAT", "[math]")
 	verticesB = Engine::getVertices(&shapeB);
 
 	// react to collision
-	MTV = Engine::checkCollide(verticesA, verticesB);
+	MTV = Engine::processCollision(verticesA, verticesB);
 	shapeB.move(-MTV);
 
 	// check if the shapeB is moved and doesn't collide anymore
 	verticesA = Engine::getVertices(&shapeA);
 	verticesB = Engine::getVertices(&shapeB);
-	MTV = Engine::checkCollide(verticesA, verticesB);
+	MTV = Engine::processCollision(verticesA, verticesB);
 	float lengthMTV = std::sqrt(MTV.x * MTV.x + MTV.y * MTV.y);
 	
 	const float MARGIN = 1e-2f;

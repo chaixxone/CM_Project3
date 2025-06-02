@@ -110,7 +110,7 @@ int main()
 
 		for (const auto& part : partsCollideCheck)
 		{
-			std::optional<Engine::CollisionResponse> response = Engine::checkCollide(objVertices, Engine::getVertices(part));
+			std::optional<Engine::CollisionResponse> response = Engine::processCollision(objVertices, Engine::getVertices(part));
 
 			if (response != std::nullopt)
 			{
