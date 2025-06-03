@@ -117,6 +117,12 @@ namespace Engine
 		return edges;
 	}		
 
+	sf::Vector2f unit(const sf::Vector2f& v)
+	{
+		float magnitude = std::sqrt(v.x * v.x + v.y * v.y);
+		return v / magnitude;
+	}
+
 	/**
 	* @brief Calculates 2-dimensional cross product of vectors
 	* @param a: first vector
