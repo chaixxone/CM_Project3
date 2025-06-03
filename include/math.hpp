@@ -328,7 +328,7 @@ namespace Engine
 		Edge incident;
 		bool flip = false;
 
-		if (std::abs(dot(e1, normalVector)) <= std::abs(dot(e2, normalVector)))
+		if (std::abs(dot(e1.GetVector(), normalVector)) <= std::abs(dot(e2.GetVector(), normalVector)))
 		{
 			reference = e1;
 			incident = e2;
