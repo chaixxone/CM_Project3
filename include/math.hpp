@@ -157,6 +157,13 @@ namespace Engine
 		}
 	};
 
+	struct Edge
+	{
+		sf::Vector2f MaximumVertex;
+		sf::Vector2f Start;
+		sf::Vector2f End;
+	};
+
 	/**
 	* @brief Checks two shapes for a collision between them. Uses SAT collision method and forms collision response
 	* @param aShapeVertices: first shape verteces
