@@ -217,6 +217,9 @@ namespace Engine
 
 		std::unordered_set<sf::Vector2f, VectorHash, VectorCollinear> axes;
 
+		Projection minProjectionA, minProjectionB; // min 
+		Projection maxProjectionA, maxProjectionB; // max 
+
 		for (const auto& edge : allEdges)
 		{
 			sf::Vector2f edgeVector = edge.second - edge.first;
@@ -245,8 +248,8 @@ namespace Engine
 			}
 
 			// find minimum and maximum projections of each shape
-			Projection minProjectionA = projectionsA[0];
-			Projection maxProjectionA = projectionsA[0];
+			minProjectionA = projectionsA[0];
+			maxProjectionA = projectionsA[0];
 
 			for (size_t j = 1; j < projectionsA.size(); j++)
 			{
@@ -254,8 +257,8 @@ namespace Engine
 				maxProjectionA = std::max(maxProjectionA, projectionsA[j]);
 			}
 
-			Projection minProjectionB = projectionsB[0];
-			Projection maxProjectionB = projectionsB[0];
+			minProjectionB = projectionsB[0];
+			maxProjectionB = projectionsB[0];
 
 			for (size_t j = 1; j < projectionsB.size(); j++)
 			{
@@ -310,6 +313,26 @@ namespace Engine
 		if (dot(minimumTranslationVector, directionAB) < 0.f)
 		{
 			minimumTranslationVector = -minimumTranslationVector;
+		}
+
+		sf::Vector2f normalVector = normal(minimumTranslationVector);
+		Edge e1 = closestEdge(normalVector, maxProjectionA, aShapeVertices);
+		Edge e2 = closestEdge(-normalVector, maxProjectionB, bShapeVertices);
+
+		Edge reference;
+		Edge incident;
+		bool flip = false;
+
+		if (std::abs(dot(e1, normalVector)) <= std::abs(dot(e2, normalVector)))
+		{
+			reference = e1;
+			incident = e2;
+		}
+		else
+		{
+			reference = e2;
+			incident = e1;
+			flip = true;
 		}
 
 		CollisionResponse response{ pointOfCollision, minimumTranslationVector };
