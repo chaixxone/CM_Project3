@@ -200,13 +200,13 @@ namespace Engine
 			for (size_t j = 0; j < aShapeVertices.size(); j++)
 			{
 				float projection = projectionWithNormal(normalVector, aShapeVertices[j]);
-				projectionsA[j] = Projection{ projection, aShapeVertices[j] };
+				projectionsA[j] = Projection{ projection, j };
 			}
 
 			for (size_t j = 0; j < bShapeVertices.size(); j++)
 			{
 				float projection = projectionWithNormal(normalVector, bShapeVertices[j]);
-				projectionsB[j] = Projection{ projection, bShapeVertices[j] };
+				projectionsB[j] = Projection{ projection, j };
 			}
 
 			// find minimum and maximum projections of each shape
@@ -246,7 +246,7 @@ namespace Engine
 				}
 
 				overlapVectorLength = maxProjectionA - minProjectionB;
-				pointOfCollision = maxProjectionA.GetPoint();
+				pointOfCollision = aShapeVertices[maxProjectionA.GetPointIndex()];
 			}
 			else if (minProjectionA > minProjectionB)
 			{
@@ -256,7 +256,7 @@ namespace Engine
 				}
 
 				overlapVectorLength = maxProjectionB - minProjectionA;
-				pointOfCollision = minProjectionA.GetPoint();
+				pointOfCollision = bShapeVertices[minProjectionA.GetPointIndex()];
 			}
 
 			if (overlapVectorLength < lengthMTV)
