@@ -170,6 +170,28 @@ namespace Engine
 		sf::Vector2f End;
 	};
 
+	Edge closestEdge(const sf::Vector2f& normalVector, const Projection& maxProjection, const std::vector<sf::Vector2f>& vertices)
+	{
+		size_t index = maxProjection.GetPointIndex();
+		size_t size = vertices.size();
+		sf::Vector2f vertex = vertices[index];
+		sf::Vector2f nextVertex = vertices[(index + 1) % size];
+		sf::Vector2f prevVertex = vertices[(index - 1) % size];
+
+		sf::Vector2f prevToVertex = vertex - prevVertex;
+		sf::Vector2f nextToVertex = vertex - nextVertex;
+
+		prevToVertex = unit(prevToVertex);
+		nextToVertex = unit(nextToVertex);
+
+		if (dot(prevToVertex, normalVector) <= dot(nextToVertex, normalVector))
+		{
+			return Edge{ vertex, prevVertex, vertex };
+		}
+
+		return Edge{ vertex, vertex, nextVertex };
+	}
+
 	/**
 	* @brief Checks two shapes for a collision between them. Uses SAT collision method and forms collision response
 	* @param aShapeVertices: first shape verteces
