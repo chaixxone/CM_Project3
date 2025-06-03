@@ -197,6 +197,27 @@ namespace Engine
 		return Edge{ vertex, vertex, nextVertex };
 	}
 
+	std::vector<sf::Vector2f> clip(const sf::Vector2f& v1, const sf::Vector2f& v2, const sf::Vector2f& normalVector, float projectionValue)
+	{
+		std::vector<sf::Vector2f> clippedPoints;
+		float d1 = dot(normalVector, v1) - projectionValue;
+		float d2 = dot(normalVector, v2) - projectionValue;
+
+		if (d1 >= 0.f) clippedPoints.push_back(v1);
+		if (d2 >= 0.f) clippedPoints.push_back(v2);
+
+		if (d1 * d2 < 0.f)
+		{
+			sf::Vector2f e = v2 - v1;
+			float u = d1 / (d1 - d2);
+			e *= u;
+			e += v1;
+			clippedPoints.push_back(e);
+		}
+
+		return clippedPoints;
+	}
+
 	/**
 	* @brief Checks two shapes for a collision between them. Uses SAT collision method and forms collision response
 	* @param aShapeVertices: first shape verteces
