@@ -168,6 +168,11 @@ namespace Engine
 		sf::Vector2f MaximumVertex;
 		sf::Vector2f Start;
 		sf::Vector2f End;
+
+		sf::Vector2f GetVector() const
+		{
+			return End - Start;
+		}
 	};
 
 	Edge closestEdge(const sf::Vector2f& normalVector, const Projection& maxProjection, const std::vector<sf::Vector2f>& vertices)
