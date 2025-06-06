@@ -7,6 +7,10 @@ cmake_minimum_required (VERSION 3.8)
 if (POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
+<<<<<<< HEAD
+=======
+  add_compile_options(/JMC)
+>>>>>>> c03648f5f9a08e234adaebedf07a7804295611b8
 endif()
 
 project ("CM_Project3")
