@@ -6,7 +6,7 @@ namespace Engine
 {
 	/**
 	* @brief Defines a projection onto a normal in 1D dimention 
-	* and contains the position of point that is projected
+	* and contains the index of the point that is projected
 	*/
 	class Projection
 	{
@@ -14,25 +14,30 @@ namespace Engine
 		/**
 		* @brief Default constructor
 		*/
-		Projection() : _projectionOntoNormal(0.f), _projectedPoint(sf::Vector2f{ 0.f, 0.f }) {}
+		Projection() : _projectionOntoNormal(0.f), _projectedPointIndex(0) {}
 
 		/**
 		* @brief Creates Projection object
 		* @param projection: value of 1D projection onto a normal
-		* @param point: the point that is projected onto a normal
+		* @param point: an index of the point that is projected onto a normal
 		*/
-		Projection(float projection, const sf::Vector2f& point)
-			: _projectionOntoNormal(projection), _projectedPoint(point) {}
+		Projection(float projection, size_t pointIndex)
+			: _projectionOntoNormal(projection), _projectedPointIndex(pointIndex) {}
 
-		sf::Vector2f GetPoint() const noexcept
+		size_t GetPointIndex() const noexcept
 		{
-			return _projectedPoint;
+			return _projectedPointIndex;
+		}
+
+		float GetProjectionValue() const noexcept
+		{
+			return _projectionOntoNormal;
 		}
 
 		void operator=(const Projection& other)
 		{
 			_projectionOntoNormal = other._projectionOntoNormal;
-			_projectedPoint = other._projectedPoint;
+			_projectedPointIndex = other._projectedPointIndex;
 		}
 
 		auto operator<=>(const Projection& other) const
@@ -52,6 +57,6 @@ namespace Engine
 
 	private:
 		float _projectionOntoNormal;
-		sf::Vector2f _projectedPoint;
+		size_t _projectedPointIndex;
 	};
 } // namespace Engine
