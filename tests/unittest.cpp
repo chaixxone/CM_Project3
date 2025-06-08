@@ -19,12 +19,14 @@ TEST_CASE("Projection", "[math]")
 	sf::Vector2f fillerPoint{ 6.f, 5.3f };
 	sf::Vector2f point{ 7.f, 7.f };
 
-	sf::Vector2f normalVector = Engine::normal(fillerPoint - origin);
 	float distanceNormal = Engine::projection(origin, fillerPoint, point);
+	sf::Vector2f normal = Engine::normal(fillerPoint - origin);
+	float distanceNormal2 = Engine::projectionWithNormal(normal, point);
 	
 	float expected = 4.69f;
 	float tolerance = 1e-2f;
 	// make sure that the 2D coordinates of projected point are close to the expected coordinates
+	REQUIRE(distanceNormal == distanceNormal2);
 	REQUIRE(Catch::Approx(distanceNormal).margin(tolerance) == expected);
 }
 
