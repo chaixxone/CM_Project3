@@ -6,12 +6,15 @@
 
 int main()
 {
-	sf::RenderWindow window{ sf::VideoMode{800, 600}, "window" };
+	sf::RenderWindow window{ sf::VideoMode{ 1280, 720 }, "window" };
 
 	sf::RectangleShape obj({ 200, 100 });
 	
 	sf::RectangleShape movableMapRect({ 200, 100 });
 	sf::RectangleShape staticMapRect({ 200, 300 });
+
+	sf::CircleShape pointOfCollision{ 5.f };
+	pointOfCollision.setFillColor(sf::Color::Blue);
 
 	std::vector<sf::Shape*> map{ &movableMapRect, &staticMapRect };
 
@@ -110,19 +113,22 @@ int main()
 
 		for (const auto& part : partsCollideCheck)
 		{
-			sf::Vector2f MTV = Engine::checkCollide(objVertices, Engine::getVertices(part));
+			std::optional<Engine::CollisionResponse> response = Engine::processCollision(objVertices, Engine::getVertices(part));
 
-			if (MTV.x != 0.f || MTV.y != 0.f)
+			if (response != std::nullopt)
 			{
+				sf::Vector2f MTV = response->MinimumTransitionVector;
 				obj.setFillColor(sf::Color::Red);
 				obj.move(MTV);
 				currentObjFallVelocity /= 1.2f;
+				pointOfCollision.setPosition({ response->PointOfCollision.x - 5.f, response->PointOfCollision.y - 5.f });
 			}
 		}
 
 		window.draw(obj);
 		window.draw(movableMapRect);
 		window.draw(staticMapRect);
+		window.draw(pointOfCollision);
 
 		// paint the rectangles white
 		obj.setFillColor(sf::Color::White);

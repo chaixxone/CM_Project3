@@ -28,6 +28,28 @@ TEST_CASE("Projection", "[math]")
 	REQUIRE(Catch::Approx(distanceNormal).margin(tolerance) == expected);
 }
 
+TEST_CASE("Projection to 2D Point", "[math]")
+{
+	const sf::Vector2f expected{ 8.f, 8.f };
+
+	sf::Vector2f A{ 5.f, 5.f };
+	sf::Vector2f B{ 6.f, 5.3f };
+
+	sf::Vector2f AB = B - A;
+	sf::Vector2f normalisedAB = AB / std::sqrt(AB.x * AB.x + AB.y * AB.y);
+	sf::Vector2f normal = Engine::normal(AB);
+
+	const float projectionAB = Engine::dot(expected, normalisedAB);
+	const float projectionNormal = Engine::dot(expected, normal);
+
+	sf::Vector2f calculatedPoint = projectionAB * normalisedAB + projectionNormal * normal;
+	INFO("calulated point: " << calculatedPoint.x << ' ' << calculatedPoint.y);
+
+	float tolerance = 1e-2f;
+	REQUIRE(Catch::Approx(calculatedPoint.x).margin(tolerance) == expected.x);
+	REQUIRE(Catch::Approx(calculatedPoint.y).margin(tolerance) == expected.y);
+}
+
 TEST_CASE("Shape's vertices", "[math]")
 {
 	const int PENTAGON = 5;
@@ -108,8 +130,8 @@ TEST_CASE("SAT", "[math]")
 	auto verticesA = Engine::getVertices(&shapeA);
 	auto verticesB = Engine::getVertices(&shapeB);
 
-	sf::Vector2f MTV = Engine::checkCollide(verticesA, verticesB);
-	REQUIRE((MTV.x == 0.f && MTV.y == 0.f));
+	auto noCollision = Engine::processCollision(verticesA, verticesB);
+	REQUIRE(noCollision == std::nullopt);
 	
 	// shift shapeB by 100 pixels to the left - collision must be detected
 	shapeB.move({ -100.f, 0.f });
@@ -117,17 +139,23 @@ TEST_CASE("SAT", "[math]")
 	verticesB = Engine::getVertices(&shapeB);
 
 	// react to collision
-	MTV = Engine::checkCollide(verticesA, verticesB);
+	auto collisionResponse = Engine::processCollision(verticesA, verticesB);
+	sf::Vector2f MTV = collisionResponse->MinimumTransitionVector;
 	shapeB.move(-MTV);
 
 	// check if the shapeB is moved and doesn't collide anymore
 	verticesA = Engine::getVertices(&shapeA);
 	verticesB = Engine::getVertices(&shapeB);
-	MTV = Engine::checkCollide(verticesA, verticesB);
-	float lengthMTV = std::sqrt(MTV.x * MTV.x + MTV.y * MTV.y);
 	
+	// MTV can be sf::Vector{ -0, -0 } which means response is not nullopt
+	auto collisionResponseAfterMove = Engine::processCollision(verticesA, verticesB); 
+	sf::Vector2f MTV_AfterMove = collisionResponseAfterMove->MinimumTransitionVector;
+	float MTV_Magnitude = std::sqrt(MTV_AfterMove.x * MTV_AfterMove.x + MTV_AfterMove.y * MTV_AfterMove.y);
+
 	const float MARGIN = 1e-2f;
-	REQUIRE(Catch::Approx(lengthMTV).margin(MARGIN) == 0.f);
+
+	REQUIRE(collisionResponseAfterMove != std::nullopt);
+	REQUIRE(Catch::Approx(MTV_Magnitude).margin(MARGIN) == 0.f);
 }
 
 

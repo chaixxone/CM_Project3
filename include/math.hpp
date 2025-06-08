@@ -2,8 +2,13 @@
 
 #include <cmath>
 #include <vector>
+#include <unordered_set>
 #include <SFML/System.hpp>
 #include <SFML/Graphics/Shape.hpp>
+#include <optional>
+
+#include <projection.hpp>
+#include <collision_response.hpp>
 
 namespace Engine
 {
@@ -82,12 +87,11 @@ namespace Engine
 
 	/**
 	* @brief calculates a point's projection onto a normal vector
-	* @param start: shape edge start
 	* @param normalVector: edge's normal
 	* @param vertex: point for which to create a projection
 	* @returns point 1D projection onto a normal's axis
 	*/
-	float projectionWithNormal(const sf::Vector2f& start, const sf::Vector2f& normalVector, const sf::Vector2f& vertex)
+	float projectionWithNormal(const sf::Vector2f& normalVector, const sf::Vector2f& vertex)
 	{
 		float projection = Engine::dot(vertex, normalVector);
 		return projection;
@@ -111,15 +115,61 @@ namespace Engine
 		edges[LAST] = std::make_pair(shapeVertices[LAST], shapeVertices[0]);
 
 		return edges;
-	}	
+	}		
+
+	sf::Vector2f unit(const sf::Vector2f& v)
+	{
+		float magnitude = std::sqrt(v.x * v.x + v.y * v.y);
+		return v / magnitude;
+	}
 
 	/**
-	* @brief Checks two shapes for a collision between them. Uses SAT collision method.
+	* @brief Calculates 2-dimensional cross product of vectors
+	* @param a: first vector
+	* @param b: second vector
+	* @return the direction of vectors rotation
+	*/
+	float cross(const sf::Vector2f& a, const sf::Vector2f& b)
+	{
+		return a.x * b.y - b.x * a.y;
+	}
+
+	struct VectorCollinear
+	{
+		bool operator()(const sf::Vector2f& left, const sf::Vector2f& right) const
+		{
+			return cross(left, right) == 0.f;
+		}
+	};
+
+	struct VectorHash
+	{
+		std::size_t operator()(const sf::Vector2f& v) const
+		{
+			float magnitude = std::sqrt(v.x * v.x + v.y * v.y);
+
+			if (magnitude == 0.f)
+			{
+				return 0;
+			}
+
+			float nx = v.x / magnitude;
+			float ny = v.y / magnitude;
+
+			int ix = static_cast<int>(nx * 1000);
+			int iy = static_cast<int>(ny * 1000);
+
+			return std::hash<int>()(ix) ^ (std::hash<int>()(iy) << 1);
+		}
+	};
+
+	/**
+	* @brief Checks two shapes for a collision between them. Uses SAT collision method and forms collision response
 	* @param aShapeVertices: first shape verteces
 	* @param bShapeVertices: second shape verteces
-	* @return zero vector if no collision detected, MTV if shapes are colliding
+	* @return std::nullopt if no collision detected, CollisionResponse in std::optinal when there is collision
 	*/
-	sf::Vector2f checkCollide(const std::vector<sf::Vector2f>& aShapeVertices, const std::vector<sf::Vector2f>& bShapeVertices)
+	std::optional<CollisionResponse> processCollision(const std::vector<sf::Vector2f>& aShapeVertices, const std::vector<sf::Vector2f>& bShapeVertices)
 	{
 		static sf::Vector2f ZERO_VECTOR{ 0.f, 0.f };
 
@@ -129,30 +179,45 @@ namespace Engine
 		std::vector<std::pair<sf::Vector2f, sf::Vector2f>> allEdges = aEdges;
 		std::ranges::copy(bEdges, std::back_inserter(allEdges));
 
-		std::vector<float> projectionsA(aShapeVertices.size());
-		std::vector<float> projectionsB(bShapeVertices.size());
+		std::vector<Projection> projectionsA(aShapeVertices.size());
+		std::vector<Projection> projectionsB(bShapeVertices.size());
 
 		float lengthMTV = std::numeric_limits<float>::infinity();
-		sf::Vector2f minimumTranslationVector;
+		sf::Vector2f pointOfCollision;
+		sf::Vector2f minimumTranslationVector;		
+
+		std::unordered_set<sf::Vector2f, VectorHash, VectorCollinear> axes;
 
 		for (const auto& edge : allEdges)
 		{
-			sf::Vector2f normalVector = normal(edge.second - edge.first);
+			sf::Vector2f edgeVector = edge.second - edge.first;
+
+			if (axes.contains(edgeVector))
+			{
+				continue;
+			}
+
+			axes.insert(edgeVector);
+			sf::Vector2f normalVector = normal(edgeVector);
+			float edgeMagnitude = std::sqrt(edgeVector.x * edgeVector.x + edgeVector.y * edgeVector.y);
+			sf::Vector2f edgeNormalisedVector = edgeVector / edgeMagnitude;
 
 			// make each vertex projections
 			for (size_t j = 0; j < aShapeVertices.size(); j++)
 			{
-				projectionsA[j] = projectionWithNormal(edge.first, normalVector, aShapeVertices[j]);
+				float projection = projectionWithNormal(normalVector, aShapeVertices[j]);
+				projectionsA[j] = Projection{ projection, j };
 			}
 
 			for (size_t j = 0; j < bShapeVertices.size(); j++)
 			{
-				projectionsB[j] = projectionWithNormal(edge.first, normalVector, bShapeVertices[j]);
+				float projection = projectionWithNormal(normalVector, bShapeVertices[j]);
+				projectionsB[j] = Projection{ projection, j };
 			}
 
 			// find minimum and maximum projections of each shape
-			float minProjectionA = projectionsA[0];
-			float maxProjectionA = projectionsA[0];
+			Projection minProjectionA = projectionsA[0];
+			Projection maxProjectionA = projectionsA[0];
 
 			for (size_t j = 1; j < projectionsA.size(); j++)
 			{
@@ -160,8 +225,8 @@ namespace Engine
 				maxProjectionA = std::max(maxProjectionA, projectionsA[j]);
 			}
 
-			float minProjectionB = projectionsB[0];
-			float maxProjectionB = projectionsB[0];
+			Projection minProjectionB = projectionsB[0];
+			Projection maxProjectionB = projectionsB[0];
 
 			for (size_t j = 1; j < projectionsB.size(); j++)
 			{
@@ -183,19 +248,21 @@ namespace Engine
 			{
 				if (minProjectionB > maxProjectionA)
 				{
-					return ZERO_VECTOR;
+					return std::nullopt;
 				}
 
 				overlapVectorLength = maxProjectionA - minProjectionB;
+				pointOfCollision = aShapeVertices[maxProjectionA.GetPointIndex()];
 			}
 			else if (minProjectionA > minProjectionB)
 			{
 				if (minProjectionA > maxProjectionB)
 				{
-					return ZERO_VECTOR;
+					return std::nullopt;
 				}
 
 				overlapVectorLength = maxProjectionB - minProjectionA;
+				pointOfCollision = bShapeVertices[minProjectionA.GetPointIndex()];
 			}
 
 			if (overlapVectorLength < lengthMTV)
@@ -209,14 +276,16 @@ namespace Engine
 		sf::Vector2f Bcentroid = centroid(bShapeVertices);
 		sf::Vector2f directionAB = Acentroid - Bcentroid;
 
-		// if the MTV and the direction from shape A to shape B are opposite, then dit(AB, MTV) < 0
+		// if the MTV and the direction from shape A to shape B are opposite, then dot(AB, MTV) < 0
 		// which means you have to rotate MTV by pi (negate it)
 		if (dot(minimumTranslationVector, directionAB) < 0.f)
 		{
 			minimumTranslationVector = -minimumTranslationVector;
 		}
 
-		return minimumTranslationVector;
+		CollisionResponse response{ pointOfCollision, minimumTranslationVector };
+
+		return std::optional<CollisionResponse>{ response };
 	}
 
 	/**
@@ -236,18 +305,7 @@ namespace Engine
 		}
 
 		return verteces;
-	}
-
-	/**
-	* @brief Calculates 2-dimensional cross product of vectors
-	* @param a: first vector 
-	* @param b: second vector
-	* @return the direction of vectors rotation
-	*/
-	float cross(const sf::Vector2f& a, const sf::Vector2f& b)
-	{
-		return a.x * b.y - b.x * a.y;
-	}
+	}	
 
 	/**
 	* @brief Checks if the shape is concave
