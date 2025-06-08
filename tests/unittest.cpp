@@ -43,7 +43,7 @@ TEST_CASE("Projection to 2D Point", "[math]")
 	const float projectionNormal = Engine::dot(expected, normal);
 
 	sf::Vector2f calculatedPoint = projectionAB * normalisedAB + projectionNormal * normal;
-	INFO("calulated point: " << calculatedPoint.x << ' ' << calculatedPoint.y);
+	INFO("calculated point: " << calculatedPoint.x << ' ' << calculatedPoint.y);
 
 	float tolerance = 1e-2f;
 	REQUIRE(Catch::Approx(calculatedPoint.x).margin(tolerance) == expected.x);
