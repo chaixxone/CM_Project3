@@ -163,6 +163,61 @@ namespace Engine
 		}
 	};
 
+	struct Edge
+	{
+		sf::Vector2f MaximumVertex;
+		sf::Vector2f Start;
+		sf::Vector2f End;
+
+		sf::Vector2f GetVector() const
+		{
+			return End - Start;
+		}
+	};
+
+	Edge closestEdge(const sf::Vector2f& normalVector, const Projection& maxProjection, const std::vector<sf::Vector2f>& vertices)
+	{
+		size_t index = maxProjection.GetPointIndex();
+		size_t size = vertices.size();
+		sf::Vector2f vertex = vertices[index];
+		sf::Vector2f nextVertex = vertices[(index + 1) % size];
+		sf::Vector2f prevVertex = vertices[(index - 1) % size];
+
+		sf::Vector2f prevToVertex = vertex - prevVertex;
+		sf::Vector2f nextToVertex = vertex - nextVertex;
+
+		prevToVertex = unit(prevToVertex);
+		nextToVertex = unit(nextToVertex);
+
+		if (dot(prevToVertex, normalVector) <= dot(nextToVertex, normalVector))
+		{
+			return Edge{ vertex, prevVertex, vertex };
+		}
+
+		return Edge{ vertex, vertex, nextVertex };
+	}
+
+	std::vector<sf::Vector2f> clip(const sf::Vector2f& v1, const sf::Vector2f& v2, const sf::Vector2f& normalVector, float projectionValue)
+	{
+		std::vector<sf::Vector2f> clippedPoints;
+		float d1 = dot(normalVector, v1) - projectionValue;
+		float d2 = dot(normalVector, v2) - projectionValue;
+
+		if (d1 >= 0.f) clippedPoints.push_back(v1);
+		if (d2 >= 0.f) clippedPoints.push_back(v2);
+
+		if (d1 * d2 < 0.f)
+		{
+			sf::Vector2f e = v2 - v1;
+			float u = d1 / (d1 - d2);
+			e *= u;
+			e += v1;
+			clippedPoints.push_back(e);
+		}
+
+		return clippedPoints;
+	}
+
 	/**
 	* @brief Checks two shapes for a collision between them. Uses SAT collision method and forms collision response
 	* @param aShapeVertices: first shape verteces
@@ -187,6 +242,9 @@ namespace Engine
 		sf::Vector2f minimumTranslationVector;		
 
 		std::unordered_set<sf::Vector2f, VectorHash, VectorCollinear> axes;
+
+		Projection minProjectionA, minProjectionB; // min 
+		Projection maxProjectionA, maxProjectionB; // max 
 
 		for (const auto& edge : allEdges)
 		{
@@ -216,8 +274,8 @@ namespace Engine
 			}
 
 			// find minimum and maximum projections of each shape
-			Projection minProjectionA = projectionsA[0];
-			Projection maxProjectionA = projectionsA[0];
+			minProjectionA = projectionsA[0];
+			maxProjectionA = projectionsA[0];
 
 			for (size_t j = 1; j < projectionsA.size(); j++)
 			{
@@ -225,8 +283,8 @@ namespace Engine
 				maxProjectionA = std::max(maxProjectionA, projectionsA[j]);
 			}
 
-			Projection minProjectionB = projectionsB[0];
-			Projection maxProjectionB = projectionsB[0];
+			minProjectionB = projectionsB[0];
+			maxProjectionB = projectionsB[0];
 
 			for (size_t j = 1; j < projectionsB.size(); j++)
 			{
@@ -281,6 +339,26 @@ namespace Engine
 		if (dot(minimumTranslationVector, directionAB) < 0.f)
 		{
 			minimumTranslationVector = -minimumTranslationVector;
+		}
+
+		sf::Vector2f normalVector = normal(minimumTranslationVector);
+		Edge e1 = closestEdge(normalVector, maxProjectionA, aShapeVertices);
+		Edge e2 = closestEdge(-normalVector, maxProjectionB, bShapeVertices);
+
+		Edge reference;
+		Edge incident;
+		bool flip = false;
+
+		if (std::abs(dot(e1.GetVector(), normalVector)) <= std::abs(dot(e2.GetVector(), normalVector)))
+		{
+			reference = e1;
+			incident = e2;
+		}
+		else
+		{
+			reference = e2;
+			incident = e1;
+			flip = true;
 		}
 
 		CollisionResponse response{ pointOfCollision, minimumTranslationVector };
