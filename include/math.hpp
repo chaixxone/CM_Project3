@@ -165,9 +165,9 @@ namespace Engine
 
 	/**
 	* @brief Checks two shapes for a collision between them. Uses SAT collision method and forms collision response
-	* @param aShapeVertices: first shape verteces
-	* @param bShapeVertices: second shape verteces
-	* @return std::nullopt if no collision detected, CollisionResponse in std::optinal when there is collision
+	* @param aShapeVertices: first shape vertices
+	* @param bShapeVertices: second shape vertices
+	* @return std::nullopt if no collision detected, CollisionResponse in std::optional when there is collision
 	*/
 	std::optional<CollisionResponse> processCollision(const std::vector<sf::Vector2f>& aShapeVertices, const std::vector<sf::Vector2f>& bShapeVertices)
 	{
