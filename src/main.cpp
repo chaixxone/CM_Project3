@@ -59,7 +59,6 @@ int main()
 					break;
 				case sf::Keyboard::Up:
 					movableMapRect.move(sf::Vector2f{ 0.f, -VELOCITY });
-					currentObjFallVelocity = 0.f;
 					break;
 				case sf::Keyboard::Left:
 					movableMapRect.move(sf::Vector2f{ -VELOCITY, 0.f });
