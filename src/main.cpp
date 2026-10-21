@@ -5,6 +5,7 @@
 #include <math.hpp>
 
 constexpr float FALL_VELOCITY_LOSS = 1.2f;
+constexpr float POINT_RADIUS = 5.F;
 
 int main()
 {
@@ -16,7 +17,7 @@ int main()
 	sf::RectangleShape movableMapRect({ 200, 100 });
 	sf::RectangleShape staticMapRect({ 200, 300 });
 
-	sf::CircleShape pointOfCollision{ 5.f };
+	sf::CircleShape pointOfCollision{ POINT_RADIUS };
 	pointOfCollision.setFillColor(sf::Color::Blue);
 
 	std::vector<sf::Shape*> map{ &movableMapRect, &staticMapRect };
@@ -125,7 +126,7 @@ int main()
 				obj.setFillColor(sf::Color::Red);
 				obj.move(MTV);
 				currentObjFallVelocity /= FALL_VELOCITY_LOSS;
-				pointOfCollision.setPosition({ response->PointOfCollision.x - 5.f, response->PointOfCollision.y - 5.f });
+				pointOfCollision.setPosition({ response->PointOfCollision.x - POINT_RADIUS, response->PointOfCollision.y - POINT_RADIUS });
 			}
 		}
 
