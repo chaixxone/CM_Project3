@@ -12,6 +12,7 @@ int main()
 
 	sf::RectangleShape obj({ 200, 100 });
 	
+	// TODO: add map initializer (with serializing)
 	sf::RectangleShape movableMapRect({ 200, 100 });
 	sf::RectangleShape staticMapRect({ 200, 300 });
 
@@ -98,10 +99,12 @@ int main()
 
 		window.clear(sf::Color::Black);
 
-		auto objVertices = Engine::getVertices(&obj);		
+		auto objVertices = Engine::getVertices(&obj);	
+
+		// TODO: prevent objects from a lot of collision checks and responses
 
 		sf::FloatRect bounds = obj.getGlobalBounds();
-		std::vector<sf::Shape*> partsCollideCheck;
+		std::vector<sf::Shape*> partsCollideCheck;		
 		
 		for (auto& part : map)
 		{
