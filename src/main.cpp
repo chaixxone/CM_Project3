@@ -4,6 +4,8 @@
 
 #include <math.hpp>
 
+constexpr float FALL_VELOCITY_LOSS = 1.2f;
+
 int main()
 {
 	sf::RenderWindow window{ sf::VideoMode{ 1280, 720 }, "window" };
@@ -96,7 +98,7 @@ int main()
 
 		window.clear(sf::Color::Black);
 
-		auto objVertices = Engine::getVertices(&obj);
+		auto objVertices = Engine::getVertices(&obj);		
 
 		sf::FloatRect bounds = obj.getGlobalBounds();
 		std::vector<sf::Shape*> partsCollideCheck;
@@ -119,7 +121,7 @@ int main()
 				sf::Vector2f MTV = response->MinimumTransitionVector;
 				obj.setFillColor(sf::Color::Red);
 				obj.move(MTV);
-				currentObjFallVelocity /= 1.2f;
+				currentObjFallVelocity /= FALL_VELOCITY_LOSS;
 				pointOfCollision.setPosition({ response->PointOfCollision.x - 5.f, response->PointOfCollision.y - 5.f });
 			}
 		}
