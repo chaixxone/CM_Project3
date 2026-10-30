@@ -34,4 +34,9 @@ namespace Implementation
 	{
 		m_shape->move({ direction.x, direction.y });
 	}
+
+	void Rectangle::SetPosition(const Engine::Vector2f& position)
+	{
+		m_shape->setPosition({ position.x, position.y });
+	}
 } // namespace Implementation

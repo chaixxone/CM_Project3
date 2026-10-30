@@ -17,6 +17,8 @@ namespace Implementation
 
 		void Move(Engine::Vector2f& direction) override;
 
+		void SetPosition(const Engine::Vector2f& position) override;
+
 	private:
 		sf::Shape* m_shape;
 	};
