@@ -25,5 +25,6 @@ namespace Engine
 		virtual std::vector<Vector2f> GetVertices() = 0;
 		virtual size_t GetPointCount() = 0;
 		virtual void Move(Vector2f& direction) = 0;
+		virtual void SetPosition(const Vector2f& position) = 0;
 	};
 } // namespace Engine
