@@ -18,6 +18,8 @@ namespace Implementation
 		void Move(Engine::Vector2f& direction) override;
 		void Move(Engine::Vector2f&& direction);
 
+		sf::FloatRect GetGlobalBounds();
+
 		void SetPosition(const Engine::Vector2f& position) override;
 
 	private:

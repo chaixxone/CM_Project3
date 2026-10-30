@@ -40,6 +40,11 @@ namespace Implementation
 		m_shape->move({ direction.x, direction.y });
 	}
 
+	sf::FloatRect Rectangle::GetGlobalBounds()
+	{
+		return m_shape->getGlobalBounds();
+	}
+
 	void Rectangle::SetPosition(const Engine::Vector2f& position)
 	{
 		m_shape->setPosition({ position.x, position.y });
