@@ -16,6 +16,7 @@ namespace Implementation
 		std::vector<Engine::Vector2f> GetVertices() override;
 
 		void Move(Engine::Vector2f& direction) override;
+		void Move(Engine::Vector2f&& direction);
 
 		void SetPosition(const Engine::Vector2f& position) override;
 
