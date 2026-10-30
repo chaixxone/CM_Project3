@@ -19,12 +19,17 @@ namespace Engine
 		virtual void Render() = 0;
 	};
 
-	class IShape
+	class IObjectBehaviour : public IRenderable
+	{
+	public:
+		virtual void Move(Vector2f& direction) = 0;
+		virtual void SetPosition(const Vector2f& position) = 0;
+	};
+
+	class IShape : public IObjectBehaviour
 	{
 	public:
 		virtual std::vector<Vector2f> GetVertices() = 0;
-		virtual size_t GetPointCount() = 0;
-		virtual void Move(Vector2f& direction) = 0;
-		virtual void SetPosition(const Vector2f& position) = 0;
+		virtual size_t GetPointCount() = 0;		
 	};
 } // namespace Engine
