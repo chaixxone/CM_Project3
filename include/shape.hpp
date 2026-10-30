@@ -8,7 +8,8 @@ namespace Implementation
 	class Rectangle : public Engine::IShape
 	{
 	public:
-		Rectangle(sf::RectangleShape& rect) : m_shape(&rect) {}
+		Rectangle(float width, float height);
+		~Rectangle();
 
 		size_t GetPointCount() override;
 

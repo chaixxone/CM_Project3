@@ -3,7 +3,15 @@
 
 namespace Implementation
 {
-	Rectangle::Rectangle(sf::RectangleShape& rect) {}
+	Rectangle::Rectangle(float width, float height)
+	{
+		m_shape = new sf::RectangleShape({ width, height });
+	}
+
+	Rectangle::~Rectangle()
+	{
+		delete m_shape;
+	}
 
 	size_t Rectangle::GetPointCount() { return 4; }
 
